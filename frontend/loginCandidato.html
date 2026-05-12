@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SIEP</title>
+
+    <link rel="stylesheet" href="Styles/loginCandidato.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+</head>
+
+<body>
+
+    <!-- RECUPERAR SENHA -->
+    <div id="boxRecuperar">
+        <div class="recuperar-card">
+
+            <h3>Recuperar senha</h3>
+            <p class="recuperar-sub">Digite seus dados</p>
+
+            <div class="input-group">
+                <input type="text" id="cpfRecuperar" placeholder="CPF">
+            </div>
+
+            <div class="input-group active">
+                <input type="password" id="novaSenhaRecuperar" placeholder="Nova senha">
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="respostaSeguranca" placeholder="..." disabled>
+            </div>
+
+
+            <button id="btnRecuperar">Atualizar senha</button>
+            <button class="btn-cancelar" onclick="fecharRecuperar()">Cancelar</button>
+
+        </div>
+    </div>
+
+    <div class="page">
+
+        <a href="#" class="back" id="btn_voltar_inicio">
+            ← Voltar para início
+        </a>
+
+        <div class="card">
+
+            <img src="img/logo.png" class="logo-quadrada">
+
+            <h1>Bem-vindo de volta!</h1>
+
+            <p class="subtitle">
+                Entre com sua conta de candidato
+            </p>
+
+            <form id="form_login">
+
+                <label>CPF</label>
+                <div class="input-group">
+                    <input type="text" id="input_cpf">
+                </div>
+
+                <label>Senha</label>
+                <div class="input-group active">
+                    <input type="password" id="input_senha">
+                </div>
+
+                <button type="submit">Entrar</button>
+
+                <p style="margin-top:10px;">
+                    <a href="#" id="btnEsqueciSenha">Esqueci minha senha</a>
+                </p>
+
+            </form>
+
+            <p id="msg_resultado"></p>
+
+            <p class="register">
+                Não tem uma conta?
+                <a href="#" id="btn_ir_cadastro">Faça seu cadastro</a>
+            </p>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        let perguntaAtual = null
+
+        // VOLTAR
+        document.getElementById("btn_voltar_inicio").onclick = () => {
+            window.location.href = 'index.html';
+        };
+
+        // CADASTRO
+        document.getElementById("btn_ir_cadastro").onclick = () => {
+            window.location.href = 'cadastroCandidato.html';
+        };
+
+        // ================= LOGIN =================
+        document.getElementById("form_login").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const cpf = document.getElementById("input_cpf").value.replace(/\D/g, "");
+            const senha = document.getElementById("input_senha").value;
+
+            try {
+                const resposta = await fetch("http://localhost:3000/loginUsuario", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cpf, senha })
+                });
+
+                const data = await resposta.json();
+
+                if (data.valido) {
+
+                    // 🔥 SALVA LOGIN
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("id_usuario", data.id_usuario);
+
+                    // 🔥 REDIRECIONAMENTO INTELIGENTE
+                    const redirect = localStorage.getItem("redirect_pos_login");
+
+                    if (redirect) {
+                        localStorage.removeItem("redirect_pos_login");
+                        window.location.href = redirect;
+                    } else {
+                        window.location.href = "perfil.html";
+                    }
+
+                } else {
+                    document.getElementById("msg_resultado").innerText = "CPF ou senha inválidos";
+                }
+
+            } catch {
+                document.getElementById("msg_resultado").innerText = "Erro no servidor";
+            }
+        });
+
+        // ================= MODAL =================
+        const boxRecuperar = document.getElementById("boxRecuperar")
+
+        document.getElementById("btnEsqueciSenha").onclick = () => {
+            boxRecuperar.style.display = "flex"
+        }
+
+        function fecharRecuperar() {
+            boxRecuperar.style.display = "none"
+        }
+
+        // ================= PERGUNTA SEGURANÇA =================
+        document.getElementById("cpfRecuperar").addEventListener("blur", async () => {
+
+            const cpf = document.getElementById("cpfRecuperar").value.replace(/\D/g, "")
+
+            if (!cpf) return
+
+            try {
+
+                const res = await fetch("http://localhost:3000/perguntaSeguranca", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cpf })
+                })
+
+                const data = await res.json()
+
+                const inputResposta = document.getElementById("respostaSeguranca")
+
+                if (data.pergunta) {
+
+                    perguntaAtual = data.campo
+
+                    inputResposta.disabled = false
+                    inputResposta.placeholder = data.pergunta
+                    inputResposta.value = ""
+
+                } else {
+                    inputResposta.disabled = true
+                    inputResposta.placeholder = ""
+                    alert(data.erro)
+                }
+
+            } catch (err) {
+                alert("Erro ao buscar pergunta")
+            }
+        })
+
+        // ================= RECUPERAR SENHA =================
+        document.getElementById("btnRecuperar").onclick = async () => {
+
+            const cpf = document.getElementById("cpfRecuperar").value.replace(/\D/g, "")
+            const resposta = document.getElementById("respostaSeguranca").value.trim()
+            const novaSenha = document.getElementById("novaSenhaRecuperar").value
+
+            if (!cpf || !resposta || !novaSenha || !perguntaAtual) {
+                alert("Preencha tudo")
+                return
+            }
+
+            const res = await fetch("http://localhost:3000/recuperarSenha", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    cpf,
+                    resposta,
+                    campo: perguntaAtual,
+                    novaSenha
+                })
+            })
+
+            const data = await res.json()
+
+            if (data.ok) {
+                alert("Senha atualizada!")
+                fecharRecuperar()
+            } else {
+                alert(data.erro)
+            }
+        }
+
+    </script>
+</body>
+</html>

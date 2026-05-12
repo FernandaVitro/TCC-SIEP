@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEP</title>
+    <link rel="stylesheet" href="Styles/minhaCandidaturas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+</head>
+<body>
+    <nav class="div_menu_lateral">
+        <img src="img/logo.png" class="logo-quadrada">
+
+        <a href="cursos.html" class="btn_item_navegacao"><i class="fas fa-home"></i> Cursos</a>
+        <a href="#" class="btn_item_navegacao"><i class="fas fa-search" id="entrar_vagas"></i> Vagas</a>
+        <a href="minhaCandidaturas.html" class="btn_item_navegacao ativo"><i class="fas fa-file-alt"></i> Minhas Candidaturas</a>
+        <a href="entrevistaCandidato.html" class="btn_item_navegacao"><i class="fas fa-calendar-alt"> </i > Entrevistas</a>
+        <a href="perfil.html" class="btn_item_navegacao "><i class="fas fa-user"></i> Meu Perfil</a>
+        <a href="notificacaoCandidato.html" class="btn_item_navegacao"><i class="fas fa-bell"></i> Notificações</a>
+
+        <div class="div_espacador_sair">
+            <a href="#" class="btn_item_navegacao" id="voltar_inicio">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </a>
+        </div>
+    </nav>
+</body>
+<script>
+    // Vagas
+    document.querySelectorAll(".btn_item_navegacao")[1].onclick = () => {
+        window.location.href = 'vagasCandidato.html';
+    };
+
+    // SAIR
+    document.getElementById("voltar_inicio").onclick = () => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("id_usuario")
+        localStorage.removeItem("id_empresa")
+
+        window.location.href = "index.html"
+    }
+</script>
+</html>
