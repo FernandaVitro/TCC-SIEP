@@ -1,376 +1,46 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>SIEP - Entrevistas</title>
-
+    <title>SIEP</title>
     <link rel="stylesheet" href="Styles/entrevistaCandidato.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <link rel="icon" href="img/favicon.ico">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 </head>
-
 <body>
-
-    <!-- MENU LATERAL -->
     <nav class="div_menu_lateral">
-
         <img src="img/logo.png" class="logo-quadrada">
 
-        <a href="cursos.html" class="btn_item_navegacao">
-            <i class="fas fa-home"></i> Cursos
-        </a>
-
-        <a href="#" class="btn_item_navegacao">
-            <i class="fas fa-search"></i> Vagas
-        </a>
-
-        <a href="minhaCandidaturas.html" class="btn_item_navegacao">
-            <i class="fas fa-file-alt"></i> Minhas Candidaturas
-        </a>
-
-        <a href="entrevistaCandidato.html" class="btn_item_navegacao ativo">
-            <i class="fas fa-calendar-alt"></i> Entrevistas
-        </a>
-
-        <a href="perfil.html" class="btn_item_navegacao">
-            <i class="fas fa-user"></i> Meu Perfil
-        </a>
-
-        <a href="notificacaoCandidato.html" class="btn_item_navegacao">
-            <i class="fas fa-bell"></i> Notificações
-        </a>
+        <a href="cursos.html" class="btn_item_navegacao"><i class="fas fa-home"></i> Cursos</a>
+        <a href="#" class="btn_item_navegacao"><i class="fas fa-search" id="entrar_vagas"></i> Vagas</a>
+        <a href="minhaCandidaturas.html" class="btn_item_navegacao"><i class="fas fa-file-alt"></i> Minhas Candidaturas</a>
+        <a href="entrevistaCandidato.html" class="btn_item_navegacao ativo"><i class="fas fa-calendar-alt"> </i > Entrevistas</a>
+        <a href="perfil.html" class="btn_item_navegacao "><i class="fas fa-user"></i> Meu Perfil</a>
+        <a href="notificacaoCandidato.html" class="btn_item_navegacao"><i class="fas fa-bell"></i> Notificações</a>
 
         <div class="div_espacador_sair">
-
             <a href="#" class="btn_item_navegacao" id="voltar_inicio">
                 <i class="fas fa-sign-out-alt"></i> Sair
             </a>
-
         </div>
-
     </nav>
-
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="div_conteudo_principal">
-
-        <!-- CABEÇALHO -->
-        <div class="div_cabecalho_perfil">
-
-            <div>
-                <h1 class="txt_titulo_pagina">
-                    Minhas Entrevistas
-                </h1>
-            </div>
-
-        </div>
-
-
-        <!-- ÁREA DAS ENTREVISTAS -->
-        <div id="listaEntrevistas">
-
-            <div class="div_cartao">
-
-                <div class="div_titulo_secao">
-
-                    <i class="fas fa-spinner fa-spin"></i>
-
-                    Carregando entrevistas...
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
-
-
-    <script>
-
-        // ==========================================
-        // PEGAR DADOS DO USUÁRIO
-        // ==========================================
-
-        const token = localStorage.getItem("token");
-        const idUsuario = localStorage.getItem("id_usuario");
-
-
-        // ==========================================
-        // VERIFICAR LOGIN
-        // ==========================================
-
-        if (!token || !idUsuario) {
-
-            window.location.href = "loginCandidato.html";
-
-        }
-
-
-        // ==========================================
-        // BOTÃO VAGAS
-        // ==========================================
-
-        document.querySelectorAll(".btn_item_navegacao")[1].onclick = () => {
-
-            window.location.href = "vagasCandidato.html";
-
-        };
-
-
-        // ==========================================
-        // CARREGAR ENTREVISTAS
-        // ==========================================
-
-        async function carregarEntrevistas() {
-
-            const lista = document.getElementById("listaEntrevistas");
-
-            try {
-
-                const resposta = await fetch(
-                    `http://localhost:3000/entrevistasUsuario/${idUsuario}`,
-                    {
-                        method: "GET",
-
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    }
-                );
-
-
-                // Verifica se o token expirou ou é inválido
-                if (resposta.status === 401 || resposta.status === 403) {
-
-                    localStorage.removeItem("token");
-
-                    window.location.href = "loginCandidato.html";
-
-                    return;
-                }
-
-
-                // Verifica erro no servidor
-                if (!resposta.ok) {
-
-                    throw new Error("Erro ao buscar entrevistas.");
-
-                }
-
-
-                // Converte a resposta para JSON
-                const entrevistas = await resposta.json();
-
-
-                // ==========================================
-                // NENHUMA ENTREVISTA
-                // ==========================================
-
-                if (entrevistas.length === 0) {
-
-                    lista.innerHTML = `
-
-                <div class="div_cartao mensagem-sem-entrevista">
-
-                    <div class="icone-entrevista-vazio">
-
-                        <i class="fas fa-calendar-times"></i>
-
-                    </div>
-
-                    <h2>Nenhuma entrevista marcada</h2>
-
-                    <p>
-                        Você ainda não possui entrevistas marcadas
-                        pelas empresas.
-                    </p>
-
-                </div>
-
-            `;
-
-                    return;
-                }
-
-
-                // Limpa o "Carregando..."
-                lista.innerHTML = "";
-
-
-                // ==========================================
-                // MOSTRAR ENTREVISTAS
-                // ==========================================
-
-                entrevistas.forEach(entrevista => {
-
-                    const data =
-                        entrevista.data || "Não informada";
-
-                    const horario =
-                        entrevista.horario || "Não informado";
-
-                    const tipo =
-                        entrevista.tipo_entrevista || "Não informado";
-
-                    const local =
-                        entrevista.local_link || "Não informado";
-
-
-                    // Cria o card
-                    const card = document.createElement("div");
-
-                    card.className = "div_cartao card-entrevista";
-
-
-                    card.innerHTML = `
-
-                <div class="cabecalho-card-entrevista">
-
-                    <div class="icone-card-entrevista">
-
-                        <i class="fas fa-calendar-check"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h2>Entrevista marcada</h2>
-
-                    </div>
-
-                </div>
-
-
-                <div class="informacoes-entrevista">
-
-
-                    <div class="div_linha_informacao">
-
-                        <span>
-                            <i class="fas fa-calendar"></i>
-                            Data
-                        </span>
-
-                        <strong>
-                            ${data}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="div_linha_informacao">
-
-                        <span>
-                            <i class="fas fa-clock"></i>
-                            Horário
-                        </span>
-
-                        <strong>
-                            ${horario}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="div_linha_informacao">
-
-                        <span>
-                            <i class="fas fa-video"></i>
-                            Tipo
-                        </span>
-
-                        <strong>
-                            ${tipo}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="div_linha_informacao">
-
-                        <span>
-                            <i class="fas fa-location-dot"></i>
-                            Local / Link
-                        </span>
-
-                        <strong>
-                            ${local}
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-            `;
-
-
-                    lista.appendChild(card);
-
-                });
-
-
-            } catch (erro) {
-
-                console.error("Erro ao carregar entrevistas:", erro);
-
-
-                lista.innerHTML = `
-
-            <div class="div_cartao mensagem-erro">
-
-                <div class="icone-erro">
-
-                    <i class="fas fa-exclamation-triangle"></i>
-
-                </div>
-
-                <h2>
-                    Erro ao carregar entrevistas
-                </h2>
-
-                <p>
-                    Não foi possível carregar suas entrevistas.
-                    Tente novamente mais tarde.
-                </p>
-
-            </div>
-
-        `;
-
-            }
-
-        }
-
-
-        // Executa quando a página abre
-        carregarEntrevistas();
-
-
-        // ==========================================
-        // SAIR
-        // ==========================================
-
-        document.getElementById("voltar_inicio").onclick = () => {
-
-            localStorage.removeItem("token");
-            localStorage.removeItem("id_usuario");
-            localStorage.removeItem("id_empresa");
-
-            window.location.href = "index.html";
-
-        };
-
-    </script>
-
 </body>
+<script>
+    // Vagas
+    document.querySelectorAll(".btn_item_navegacao")[1].onclick = () => {
+        window.location.href = 'vagasCandidato.html';
+    };
 
+    // SAIR
+    document.getElementById("voltar_inicio").onclick = () => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("id_usuario")
+        localStorage.removeItem("id_empresa")
+
+        window.location.href = "index.html"
+    }
+</script>
 </html>

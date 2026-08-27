@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `vagas_candidatar` (
   `id_candidatura` int(11) NOT NULL AUTO_INCREMENT,
   `id_vaga` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `status` enum('analise','aprovado','reprovado') DEFAULT 'analise',
+  `status` varchar(50) DEFAULT 'Em análise',
   `data_candidatura` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id_candidatura`),
   KEY `id_vaga` (`id_vaga`),
@@ -182,21 +182,21 @@ CREATE TABLE IF NOT EXISTS `vagas_candidatar` (
   CONSTRAINT `vagas_candidatar_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `cadastro_usuario` (`id_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
--- Copiando dados para a tabela siep.vagas_candidatar: ~9 rows (aproximadamente)
+-- Copiando dados para a tabela siep.vagas_candidatar: ~12 rows (aproximadamente)
 DELETE FROM `vagas_candidatar`;
 INSERT INTO `vagas_candidatar` (`id_candidatura`, `id_vaga`, `id_usuario`, `status`, `data_candidatura`) VALUES
-	(1, 2, 2, '', '2026-04-30 15:18:41'),
-	(2, 1, 2, '', '2026-04-30 15:34:18'),
-	(4, 4, 2, '', '2026-05-07 14:25:18'),
-	(5, 4, 3, '', '2026-05-07 14:29:11'),
-	(6, 6, 5, '', '2026-08-06 09:10:37'),
-	(7, 6, 7, '', '2026-08-06 13:15:36'),
-	(8, 10, 7, '', '2026-08-06 13:33:23'),
-	(9, 9, 7, '', '2026-08-06 13:33:25'),
-	(10, 17, 10, '', '2026-08-06 15:40:08'),
-	(11, 18, 10, '', '2026-08-06 15:45:55'),
-	(12, 19, 2, '', '2026-08-18 15:50:30'),
-	(13, 18, 2, '', '2026-08-18 15:50:35');
+	(1, 2, 2, 'Em análise', '2026-04-30 15:18:41'),
+	(2, 1, 2, 'Não selecionado', '2026-04-30 15:34:18'),
+	(4, 4, 2, 'Aprovado', '2026-05-07 14:25:18'),
+	(5, 4, 3, 'Entrevista marcada', '2026-05-07 14:29:11'),
+	(6, 6, 5, 'Em análise', '2026-08-06 09:10:37'),
+	(7, 6, 7, 'Em análise', '2026-08-06 13:15:36'),
+	(8, 10, 7, 'Em análise', '2026-08-06 13:33:23'),
+	(9, 9, 7, 'Em análise', '2026-08-06 13:33:25'),
+	(10, 17, 10, 'Aprovado', '2026-08-06 15:40:08'),
+	(11, 18, 10, 'Em análise', '2026-08-06 15:45:55'),
+	(12, 19, 2, 'Em análise', '2026-08-18 15:50:30'),
+	(13, 18, 2, 'Em análise', '2026-08-18 15:50:35');
 
 -- Copiando estrutura para tabela siep.vagas_criar
 DROP TABLE IF EXISTS `vagas_criar`;
