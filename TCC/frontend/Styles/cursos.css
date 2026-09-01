@@ -1,0 +1,233 @@
+:root {
+    --azul-primario: #2563eb;
+    --fundo-claro: #f8fafc;
+    --branco-lateral: #ffffff;
+    --cor-borda: #e2e8f0;
+    --texto-principal: #1e293b;
+    --texto-suave: #64748b;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    background-color: var(--fundo-claro);
+    color: var(--texto-principal);
+}
+
+/* Menu Lateral */
+.div_menu_lateral {
+    width: 260px;
+    background: var(--branco-lateral);
+    height: 100vh;
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+}
+
+.div_logotipo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--azul-primario);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.btn_item_navegacao {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--texto-suave);
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: 0.3s;
+}
+
+.btn_item_navegacao.ativo {
+    background: #eff6ff;
+    color: var(--azul-primario);
+}
+
+.btn_item_navegacao:hover:not(.ativo) {
+    background: #f1f5f9;
+}
+
+.btn_item_navegacao i {
+    margin-right: 12px;
+}
+
+.div_espacador_sair {
+    margin-top: auto;
+}
+
+.logo-quadrada {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    /* mantém proporção */
+    border-radius: 10px;
+    /* deixa levemente arredondado */
+}
+
+/* ==========================================================
+   ESTILOS ADICIONADOS PARA A ÁREA DE CURSOS E CARDS
+   ========================================================== */
+
+/* Ajuste do layout geral do conteúdo principal */
+.conteudo_cursos {
+    margin-left: 300px;
+    padding: 40px 20px;
+    width: calc(100% - 340px);
+    max-width: 1200px;
+}
+
+.cabecalho_cursos h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.cabecalho_cursos p {
+    color: var(--texto-suave);
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* Campo de Pesquisa */
+.pesquisa_cursos {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 30px;
+    max-width: 400px;
+}
+
+.pesquisa_cursos i {
+    color: var(--texto-suave);
+    margin-right: 10px;
+}
+
+.pesquisa_cursos input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.95rem;
+    background: transparent;
+}
+
+/* Grid de Cursos */
+.lista_cursos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Card individual com visual da imagem */
+.card_curso {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f0f0f0;
+}
+
+/* Ícone do livro verde à esquerda */
+.card_icone {
+    background-color: #d1fadf;
+    color: #00a86b;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* Informações do Card */
+.card_conteudo {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card_conteudo h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.instituicao {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.duracao {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Tags estilo pílula verde */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.tag {
+    background-color: #e6f7f0;
+    color: #00875a;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+/* Botão Acessar Curso */
+.btn_acessar {
+    margin-top: 20px;
+    color: #00875a;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+}
+
+.btn_acessar:hover {
+    text-decoration: underline;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 992px) {
+    .lista_cursos {
+        grid-template-columns: 1fr;
+    }
+    
+    .conteudo_cursos {
+        margin-left: 280px;
+        width: calc(100% - 280px);
+    }
+}

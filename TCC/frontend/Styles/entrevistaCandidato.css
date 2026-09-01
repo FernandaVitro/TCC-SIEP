@@ -1,0 +1,192 @@
+:root {
+    --azul-primario: #2563eb;
+    --fundo-claro: #f8fafc;
+    --branco-lateral: #ffffff;
+    --cor-borda: #e2e8f0;
+    --texto-principal: #1e293b;
+    --texto-suave: #64748b;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    background-color: var(--fundo-claro);
+    color: var(--texto-principal);
+}
+
+/* Menu Lateral */
+.div_menu_lateral {
+    width: 260px;
+    background: var(--branco-lateral);
+    height: 100vh;
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+}
+
+.div_logotipo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--azul-primario);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.btn_item_navegacao {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--texto-suave);
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: 0.3s;
+}
+
+.btn_item_navegacao.ativo {
+    background: #eff6ff;
+    color: var(--azul-primario);
+}
+
+.btn_item_navegacao:hover:not(.ativo) {
+    background: #f1f5f9;
+}
+
+.btn_item_navegacao i {
+    margin-right: 12px;
+}
+
+.div_espacador_sair {
+    margin-top: auto;
+}
+
+.logo-quadrada {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Conteúdo Principal */
+.div_conteudo_principal {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
+    max-width: 900px;
+    box-sizing: border-box;
+}
+
+.div_cabecalho_perfil {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.txt_titulo_pagina {
+    margin: 0;
+}
+
+/* ==========================================
+   ALTERAÇÃO EXCLUSIVA DAS CAIXAS (CARDS)
+   ========================================== */
+
+.div_cartao {
+    background: #ffffff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Cabeçalho do Card */
+.cabecalho-card-entrevista {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.icone-card-entrevista {
+    width: 48px;
+    height: 48px;
+    background-color: #dbeafe;
+    color: var(--azul-primario);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.cabecalho-card-entrevista h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--texto-principal);
+}
+
+/* Linhas de Informações */
+.informacoes-entrevista {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.informacoes-entrevista .div_linha_informacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    border-bottom: none;
+    font-size: 0.875rem;
+}
+
+.informacoes-entrevista .div_linha_informacao span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--texto-suave);
+}
+
+.informacoes-entrevista .div_linha_informacao i {
+    width: 16px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.informacoes-entrevista .div_linha_informacao strong {
+    color: var(--texto-principal);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Telas de Vazio/Erro */
+.mensagem-sem-entrevista, .mensagem-erro {
+    background: #ffffff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    color: var(--texto-suave);
+}
+
+.icone-entrevista-vazio, .icone-erro {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    color: #94a3b8;
+    background: none;
+    width: auto;
+    height: auto;
+}

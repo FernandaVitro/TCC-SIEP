@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEP</title>
+    <link rel="stylesheet" href="Styles/cursos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+</head>
+
+<body>
+    <nav class="div_menu_lateral">
+        <img src="img/logo.png" class="logo-quadrada">
+
+        <a href="cursos.html" class="btn_item_navegacao ativo"><i class="fas fa-home"></i> Cursos</a>
+        <a href="#" class="btn_item_navegacao"><i class="fas fa-search" id="entrar_vagas"></i> Vagas</a>
+        <a href="minhaCandidaturas.html" class="btn_item_navegacao"><i class="fas fa-file-alt"></i> Minhas Candidaturas</a>
+        <a href="entrevistaCandidato.html" class="btn_item_navegacao"><i class="fas fa-calendar-alt"></i> Entrevistas</a>
+        <a href="perfil.html" class="btn_item_navegacao"><i class="fas fa-user"></i> Meu Perfil</a>
+        <a href="notificacaoCandidato.html" class="btn_item_navegacao"><i class="fas fa-bell"></i> Notificações</a>
+
+        <div class="div_espacador_sair">
+            <a href="#" class="btn_item_navegacao" id="voltar_inicio">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </a>
+        </div>
+    </nav>
+
+    <main class="conteudo_cursos">
+        <div class="cabecalho_cursos">
+            <h1>Cursos Gratuitos SENAI</h1>
+            <p>Encontre cursos gratuitos para desenvolver suas habilidades profissionais.</p>
+        </div>
+
+        <div class="pesquisa_cursos">
+            <i class="fas fa-search"></i>
+            <input type="text" id="pesquisaCurso" placeholder="Pesquisar curso..." onkeyup="filtrarCursos()">
+        </div>
+
+        <div class="lista_cursos" id="listaCursos">
+
+            <div class="card_curso">
+                <div class="card_icone">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="card_conteudo">
+                    <h3>Excel do Básico ao Avançado</h3>
+                    <span class="instituicao">Fundação Bradesco</span>
+                    <div class="duracao">
+                        <i class="far fa-clock"></i> 15 horas
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Excel</span>
+                        <span class="tag">Planilhas</span>
+                        <span class="tag">Pacote Office</span>
+                    </div>
+                    <a href="https://www.sp.senai.br/" target="_blank" class="btn_acessar">
+                        Acessar curso <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card_curso">
+                <div class="card_icone">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="card_conteudo">
+                    <h3>Comunicação Empresarial</h3>
+                    <span class="instituicao">SENAI</span>
+                    <div class="duracao">
+                        <i class="far fa-clock"></i> 20 horas
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Comunicação</span>
+                        <span class="tag">Escrita</span>
+                        <span class="tag">Apresentação</span>
+                    </div>
+                    <a href="https://www.sp.senai.br/" target="_blank" class="btn_acessar">
+                        Acessar curso <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card_curso">
+                <div class="card_icone">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="card_conteudo">
+                    <h3>Introdução ao Marketing Digital</h3>
+                    <span class="instituicao">Google</span>
+                    <div class="duracao">
+                        <i class="far fa-clock"></i> 40 horas
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Marketing</span>
+                        <span class="tag">Digital</span>
+                        <span class="tag">Redes Sociais</span>
+                    </div>
+                    <a href="https://www.sp.senai.br/" target="_blank" class="btn_acessar">
+                        Acessar curso <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card_curso">
+                <div class="card_icone">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="card_conteudo">
+                    <h3>Atendimento ao Cliente</h3>
+                    <span class="instituicao">SEBRAE</span>
+                    <div class="duracao">
+                        <i class="far fa-clock"></i> 8 horas
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Atendimento</span>
+                        <span class="tag">Cliente</span>
+                        <span class="tag">Vendas</span>
+                    </div>
+                    <a href="https://www.sp.senai.br/" target="_blank" class="btn_acessar">
+                        Acessar curso <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function filtrarCursos() {
+            const pesquisa = document.getElementById("pesquisaCurso").value.toLowerCase();
+            const cursos = document.querySelectorAll(".card_curso");
+
+            cursos.forEach(curso => {
+                const texto = curso.innerText.toLowerCase();
+                if (texto.includes(pesquisa)) {
+                    curso.style.display = "flex";
+                } else {
+                    curso.style.display = "none";
+                }
+            });
+        }
+
+        // Vagas
+        document.querySelectorAll(".btn_item_navegacao")[1].onclick = () => {
+            window.location.href = 'vagasCandidato.html';
+        };
+
+        // SAIR
+        document.getElementById("voltar_inicio").onclick = () => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("id_usuario");
+            localStorage.removeItem("id_empresa");
+
+            window.location.href = "index.html";
+        };
+    </script>
+</body>
+
+</html>

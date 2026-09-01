@@ -1,0 +1,8 @@
+empresa:
+arrumar na parte de colocar os status do candidato, se ele foi aprovado no teste1 da mesma empresa, no teste 2 ele também vai ficar marcado como aprovado
+
+candidato: 
+na minha candidaturas se a empresa mudar o status, ele não muda no "minhas Candidaturas", ainda fica "em analise"
+
+cursos:fazer
+notificações: fazer

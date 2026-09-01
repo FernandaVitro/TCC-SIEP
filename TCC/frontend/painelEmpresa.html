@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+
+    <style>
+        body {
+            background-color: #f0fdf9;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input,
+        select,
+        textarea {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem !important;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+    </style>
+
+
+</head>
+<!-- MODAL DE SUCESSO -->
+<div id="modal-sucesso" class="hidden fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-10 text-center shadow-lg w-[350px]">
+
+        <div class="bg-green-100 w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-4">
+            <i class="fa-solid fa-check text-green-600 text-2xl"></i>
+        </div>
+
+        <h2 class="text-xl font-bold mb-2">Vaga publicada!</h2>
+        <p class="text-gray-500 mb-6">
+            Sua vaga foi publicada com sucesso e já está visível para candidatos.
+        </p>
+
+        <!-- LOADING -->
+        <div class="w-6 h-6 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+
+    </div>
+</div>
+
+
+
+<body class="text-slate-700">
+
+
+
+    <div id="dashboard">
+        <header class="bg-white border-b border-gray-100 px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+
+                <h1 class="font-bold text-xl tracking-tight text-slate-800">SIEP</h1>
+
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleScreens()"
+                    class="bg-[#0f8b71] hover:bg-[#0d7a63] text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition">
+                    <i class="fa-solid fa-plus text-xs"></i> Nova Vaga
+                </button>
+                <button id="voltar_inicio" class="text-slate-400 hover:text-slate-600 transition"><i
+                        class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-8 py-10">
+            <section class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-2">Bem-vindo!</h2>
+                <p class="text-slate-500 mt-1">Gerencie suas vagas e candidatos</p>
+            </section>
+
+
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-2xl border border-gray-50 flex items-center gap-4 shadow-sm">
+                    <div class="bg-green-100 text-green-600 w-12 h-12 flex items-center justify-center rounded-xl"><i
+                            class="fa-solid fa-briefcase"></i></div>
+                    <div>
+                        <p id="total-vagas" class="text-2xl font-bold">0</p>
+                        <p class="text-sm text-gray-400">Vagas Ativas</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-50 flex items-center gap-4 shadow-sm">
+                    <div class="bg-blue-50 text-blue-500 w-12 h-12 flex items-center justify-center rounded-xl"><i
+                            class="fa-solid fa-users"></i></div>
+                    <div>
+                        <p id="total-candidaturas" class="text-2xl font-bold">0</p>
+                        <p class="text-sm text-gray-400">Candidaturas</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-50 flex items-center gap-4 shadow-sm">
+                    <div class="bg-purple-50 text-purple-500 w-12 h-12 flex items-center justify-center rounded-xl"><i
+                            class="fa-solid fa-calendar-days"></i></div>
+                    <div>
+                        <p id="total-entrevistas" class="text-2xl font-bold">0</p>
+                        <p class="text-sm text-gray-400">Entrevistas</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-50 flex items-center gap-4 shadow-sm">
+                    <div class="bg-red-50 text-red-400 w-12 h-12 flex items-center justify-center rounded-xl"><i
+                            class="fa-solid fa-bell"></i></div>
+                    <div>
+                        <p id="total-notificacoes" class="text-2xl font-bold">0</p>
+                        <p class="text-sm text-gray-400">Notificações</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex gap-3 mb-6">
+
+                <button onclick="trocarAba('vagas')" id="aba-vagas"
+                    class="px-4 py-2 rounded-full bg-[#0f8b71] text-white font-medium">
+                    Minhas Vagas
+                </button>
+
+                <button onclick="trocarAba('candidaturas')" id="aba-candidaturas"
+                    class="px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium">
+                    Candidaturas
+                </button>
+
+                <button onclick="trocarAba('notificacoes')" id="aba-notificacoes"
+                    class="px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium relative">
+                    Notificações
+                    <span class="absolute -top-1 -right-2 bg-red-500 text-white text-xs px-1.5 rounded-full"></span>
+                </button>
+
+            </div>
+            <!-- ADICIONE dentro do <main>, logo depois dos botões de abas -->
+
+            <!-- LISTA DE VAGAS -->
+            <div id="lista-vagas" class="hidden"></div>
+
+            <!-- CANDIDATURAS -->
+            <div id="tela-candidaturas" class="hidden">
+
+                <!-- filtros -->
+                <div class="flex gap-3 mb-6">
+
+                    <input id="busca-candidato" type="text" placeholder="Buscar candidato..."
+                        class="flex-1 px-4 py-2 rounded-xl border outline-none">
+
+                    <select id="filtro-idade" class="px-4 py-2 rounded-xl border">
+                        <option value="">Todas idades</option>
+                        <option value="14-17">14-17 anos</option>
+                        <option value="18-24">18-24 anos</option>
+                        <option value="25+">25+ anos</option>
+                    </select>
+
+                    <select id="filtro-vaga" class="px-4 py-2 rounded-xl border">
+                        <option value="">Todas vagas</option>
+                    </select>
+
+                </div>
+
+                <!-- lista -->
+                <div id="lista-candidaturas" class="space-y-4"></div>
+
+            </div>
+
+            <!-- ESTADO VAZIO -->
+            <div id="estado-vazio"
+                class="bg-white rounded-[2rem] py-20 border border-gray-50 flex flex-col items-center justify-center text-center">
+
+                <div class="bg-gray-50 w-20 h-20 flex items-center justify-center rounded-2xl mb-6">
+                    <i class="fa-solid fa-briefcase text-3xl text-gray-300"></i>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Nenhuma vaga publicada</h3>
+                <p class="text-slate-400 max-w-sm mb-8">Publique sua primeira vaga e comece a receber candidaturas</p>
+
+                <button onclick="toggleScreens()"
+                    class="bg-[#0f8b71] hover:bg-[#0d7a63] text-white px-8 py-3 rounded-xl flex items-center gap-2 font-semibold transition">
+                    <i class="fa-solid fa-plus"></i> Criar Vaga
+                </button>
+            </div>
+
+            <!-- Perfil -->
+            <div id="modal-perfil"
+                class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+
+                <div
+                    class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl relative border border-slate-100 my-8 p-6 md:p-8">
+
+                    <!-- Botão Fechar -->
+                    <button onclick="fecharPerfil()"
+                        class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-9 h-9 rounded-full flex items-center justify-center transition-all z-10">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+
+                    <!-- Cabeçalho com Foto Intacta -->
+                    <div
+                        class="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-slate-100">
+
+                        <!-- TAG DA FOTO EXATAMENTE IGUAL Á ORIGINAL -->
+                        <img id="perfil-foto" src="" class="w-28 h-28 rounded-3xl object-cover bg-gray-100 border">
+
+                        <div class="text-center sm:text-left flex-1">
+                            <h2 id="perfil-nome" class="text-2xl font-bold text-slate-800"></h2>
+
+                            <div class="mt-2 space-y-1 text-sm text-slate-500">
+                                <p class="flex items-center justify-center sm:justify-start gap-2">
+                                    <i class="fas fa-envelope text-slate-400 w-4"></i>
+                                    <span id="perfil-email"></span>
+                                </p>
+                                <p class="flex items-center justify-center sm:justify-start gap-2">
+                                    <i class="fas fa-phone text-slate-400 w-4"></i>
+                                    <span id="perfil-telefone"></span>
+                                </p>
+                                <p class="flex items-center justify-center sm:justify-start gap-2">
+                                    <i class="fas fa-map-marker-alt text-slate-400 w-4"></i>
+                                    <span id="perfil-local"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cards de Informações Gerais -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100/80">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Escolaridade
+                            </p>
+                            <p id="perfil-escolaridade" class="font-medium text-slate-800 text-base"></p>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100/80">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Instituição
+                            </p>
+                            <p id="perfil-instituicao" class="font-medium text-slate-800 text-base"></p>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100/80">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Curso</p>
+                            <p id="perfil-curso" class="font-medium text-slate-800 text-base"></p>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100/80">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Habilidades
+                            </p>
+                            <p id="perfil-habilidades" class="font-medium text-slate-800 text-base"></p>
+                        </div>
+                    </div>
+
+                    <!-- Sobre o Candidato -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100/80 mb-6">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Sobre o candidato
+                        </p>
+                        <p id="perfil-sobre" class="text-sm leading-relaxed text-slate-600 italic"></p>
+                    </div>
+
+                    <!-- Link PDF -->
+                    <div class="mb-6">
+                        <a id="perfil-cv" target="_blank"
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-medium text-sm transition-all border border-slate-200">
+                            <i class="fas fa-file-pdf text-red-500"></i> Abrir currículo PDF
+                        </a>
+                    </div>
+
+                    <!-- Ações do Recrutador -->
+                    <div class="pt-6 border-t border-slate-100 flex flex-col gap-4">
+                        <button onclick="irEntrevista(candidaturaAtual)"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-sm shadow-blue-200">
+                            <i class="fas fa-calendar-check"></i> Marcar entrevista
+                        </button>
+
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <select id="status-candidato"
+                                class="flex-1 bg-white border border-slate-200 text-slate-700 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option>Em análise</option>
+                                <option>Entrevista marcada</option>
+                                <option>Aprovado</option>
+                                <option>Não selecionado</option>
+                            </select>
+
+                            <button onclick="salvarStatus()"
+                                class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-save"></i> Salvar Status
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+    </div>
+
+    </main>
+    </div>
+
+
+
+    <!-- Criar vagas -->
+    <div id="form-vaga" class="hidden">
+        <div class="max-w-3xl mx-auto px-4 py-8">
+            <button onclick="toggleScreens()"
+                class="text-slate-500 hover:text-slate-800 flex items-center gap-2 mb-6 transition">
+                <i class="fa-solid fa-arrow-left"></i> Voltar para painel
+            </button>
+
+            <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-50">
+                <div class="flex flex-col items-center mb-10 text-center">
+
+
+                    <!-- logo -->
+                    <div class="w-16 h-16 flex items-center justify-center rounded-2xl mb-4 text-white text-2xl">
+                        <img src="img/logo.png" class="logo-quadrada">
+                    </div>
+
+
+
+
+
+
+                    <h2 class="text-2xl font-bold text-slate-800">Publicar Nova Vaga</h2>
+                    <p class="text-slate-400">Preencha os detalhes da vaga</p>
+                </div>
+
+                <form id="formCadastroVaga" class="space-y-6" onsubmit="return false;">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Título da Vaga *</label>
+                        <input id="titulo" type="text" required
+                            class="w-full outline-none focus:ring-2 focus:ring-emerald-100"
+                            placeholder="Ex: Estágio em Marketing">
+                    </div>
+
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Tipo *</label>
+
+                            <select id="tipo" required
+                                class="w-full outline-none appearance-none bg-no-repeat bg-[right_1rem_center]">
+
+                                <option value="">Selecione</option>
+                                <option value="Estágio">Estágio</option>
+                                <option value="Jovem Aprendiz">Jovem Aprendiz</option>
+
+                            </select>
+
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Modalidade *</label>
+                            <select id="modalidade" required class="w-full outline-none appearance-none">
+
+                                <option value="">Selecione</option>
+                                <option value="Híbrido">Híbrido</option>
+                                <option value="Remoto">Remoto</option>
+                                <option value="Presencial">Presencial</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Área</label>
+
+                        <select id="select-area" required onchange="toggleOutraArea()"
+                            class="w-full outline-none appearance-none">
+                            <option value="">Selecione a área</option>
+                            <option>Tecnologia</option>
+                            <option>Saúde</option>
+                            <option>Educação</option>
+                            <option>Varejo</option>
+                            <option>Indústria</option>
+                            <option>Serviços</option>
+                            <option>Financeiro</option>
+                            <option>Logística</option>
+                            <option>Alimentação</option>
+                            <option>Construção</option>
+                            <option>Outros</option>
+                        </select>
+
+                        <!-- Campo escondido -->
+                        <input id="outra-area" type="text" placeholder="Digite a área" class="w-full mt-3 hidden">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Descrição da Vaga *</label>
+                        <textarea id="descricao" required class="w-full h-32 outline-none resize-none"
+                            placeholder="Descreva as atividades, responsabilidades e o que você procura..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Cidade</label>
+                            <input id="cidade" required type="text" class="w-full" placeholder="Cidade">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">UF</label>
+                            <select id="uf" required class="w-full outline-none appearance-none">
+                                <option value="">UF</option>
+                                <option>AC</option>
+                                <option>AL</option>
+                                <option>AP</option>
+                                <option>AM</option>
+                                <option>BA</option>
+                                <option>CE</option>
+                                <option>DF</option>
+                                <option>ES</option>
+                                <option>GO</option>
+                                <option>MA</option>
+                                <option>MT</option>
+                                <option>MS</option>
+                                <option>MG</option>
+                                <option>PA</option>
+                                <option>PB</option>
+                                <option>PR</option>
+                                <option>PE</option>
+                                <option>PI</option>
+                                <option>RJ</option>
+                                <option>RN</option>
+                                <option>RS</option>
+                                <option>RO</option>
+                                <option>RR</option>
+                                <option>SC</option>
+                                <option>SP</option>
+                                <option>SE</option>
+                                <option>TO</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Faixa Salarial / Bolsa</label>
+                        <input type="text" class="w-full" placeholder="Ex: R$ 1.200,00 - R$ 1.500,00">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Idade Mínima</label>
+                            <input type="number" class="w-full" value="14">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Idade Máxima</label>
+                            <input type="number" class="w-full" value="24">
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-slate-700">Requisitos</label>
+
+                        <div class="flex gap-2">
+                            <input id="input-requisito" type="text" class="flex-1" placeholder="Adicionar requisito">
+                            <button type="button" onclick="addTag('requisitos')"
+                                class="bg-[#0f8b71] text-white w-12 h-12 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+
+                        <div id="lista-requisitos" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-slate-700">Benefícios</label>
+
+                        <div class="flex gap-2">
+                            <input id="input-beneficio" type="text" class="flex-1" placeholder="Adicionar benefício">
+                            <button type="button" onclick="addTag('beneficios')"
+                                class="bg-[#0f8b71] text-white w-12 h-12 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+
+                        <div id="lista-beneficios" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <button type="button" onclick="validarVaga()"
+                        class="w-full bg-[#0f8b71] hover:bg-[#0d7a63] text-white py-4 rounded-xl font-bold text-lg mt-8 transition">
+                        Publicar Vaga
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+
+    function validarVaga() {
+
+        let titulo = document.getElementById("titulo").value.trim()
+        let tipo = document.getElementById("tipo").value
+        let modalidade = document.getElementById("modalidade").value
+        let area = document.getElementById("select-area").value
+        let descricao = document.getElementById("descricao").value.trim()
+        let cidade = document.getElementById("cidade").value.trim()
+        let uf = document.getElementById("uf").value
+
+
+        if (titulo == "") {
+            alert("Preencha o título da vaga")
+            return
+        }
+
+        if (tipo == "") {
+            alert("Selecione o tipo da vaga")
+            return
+        }
+
+        if (modalidade == "") {
+            alert("Selecione a modalidade da vaga")
+            return
+        }
+
+        if (area == "") {
+            alert("Selecione a área da vaga")
+            return
+        }
+
+        if (descricao == "") {
+            alert("Preencha a descrição da vaga")
+            return
+        }
+
+        if (cidade == "") {
+            alert("Informe a cidade")
+            return
+        }
+
+        if (uf == "") {
+            alert("Selecione a UF")
+            return
+        }
+
+
+        publicarVaga()
+    }
+
+    let editandoVaga = null
+
+    const token = localStorage.getItem("token")
+    const idEmpresa = localStorage.getItem("id_empresa")
+
+    if (!token || !idEmpresa) {
+        window.location.href = "loginEmpresa.html"
+    }
+
+    // ================= PUBLICAR =================
+    async function publicarVaga() {
+
+
+        const dados = {
+
+            titulo_vaga:
+                document.getElementById("titulo").value.trim(),
+
+
+            tipo:
+                document.getElementById("tipo").value,
+
+
+            modalidade:
+                document.getElementById("modalidade").value,
+
+
+            area:
+                document.getElementById("select-area").value,
+
+
+            descricao:
+                document.getElementById("descricao").value.trim(),
+
+
+            cidade:
+                document.getElementById("cidade").value.trim(),
+
+
+            uf:
+                document.getElementById("uf").value,
+
+
+            salario:
+                document.querySelector('input[placeholder*="R$"]').value.trim(),
+
+
+            idade_minima:
+                document.querySelectorAll('input[type="number"]')[0].value,
+
+
+            idade_maxima:
+                document.querySelectorAll('input[type="number"]')[1].value,
+
+
+            requisitos:
+                [...document.querySelectorAll("#lista-requisitos div")]
+                    .map(el => el.textContent.replace("x", "").trim())
+
+        }
+
+
+
+        // VALIDAÇÃO ANTES DE ENVIAR
+
+        if (
+            dados.titulo_vaga === "" ||
+            dados.tipo === "" ||
+            dados.tipo === "Selecione" ||
+            dados.modalidade === "" ||
+            dados.modalidade === "Selecione" ||
+            dados.area === "" ||
+            dados.area === "Selecione a área" ||
+            dados.descricao === "" ||
+            dados.cidade === "" ||
+            dados.uf === "" ||
+            dados.uf === "UF"
+        ) {
+
+            alert("Preencha todos os campos obrigatórios")
+            return
+
+        }
+
+
+
+        try {
+
+
+            const resposta = await fetch(
+                "http://localhost:3000/vagasCriar",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type": "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+
+                    body:
+                        JSON.stringify(dados)
+
+                }
+            )
+
+
+
+            const resultado = await resposta.json()
+
+
+
+            if (!resposta.ok) {
+
+                alert(resultado.erro)
+                return
+
+            }
+
+
+
+            alert("Vaga publicada com sucesso!")
+
+            toggleScreens()
+
+            carregarVagas()
+
+
+
+        } catch (error) {
+
+            console.log(error)
+
+            alert("Erro ao cadastrar vaga")
+
+        }
+
+    }
+
+
+    // CARREGAR VAGAS
+    async function carregarVagas() {
+
+        const lista = document.getElementById("lista-vagas")
+        const vazio = document.getElementById("estado-vazio")
+
+        try {
+
+            const resposta = await fetch(`http://localhost:3000/vagasEmpresa/${idEmpresa}`, {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            })
+
+            const vagas = await resposta.json()
+
+            if (!Array.isArray(vagas)) {
+                console.log(vagas)
+                alert("Erro ao carregar vagas")
+                return
+            }
+
+            if (vagas.length === 0) {
+                vazio.classList.remove("hidden")
+                lista.classList.add("hidden")
+                return
+            }
+
+            vazio.classList.add("hidden")
+            lista.classList.remove("hidden")
+
+            lista.innerHTML = ""
+
+            let totalCandidaturas = 0
+
+            vagas.forEach(vaga => {
+
+                totalCandidaturas += vaga.total_candidatos || 0
+
+                lista.innerHTML += `
+        
+        <div class="bg-white rounded-3xl p-7 shadow-sm border border-gray-100 mb-6 hover:shadow-lg transition">
+
+            <div class="flex justify-between items-start flex-wrap gap-4">
+
+                <div>
+
+                    <div class="flex items-center gap-3 mb-3">
+
+                        <h2 class="text-2xl font-bold text-slate-800">
+                            ${vaga.titulo_vaga}
+                        </h2>
+
+                        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                            Ativa
+                        </span>
+
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mb-4">
+
+                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm">
+                            ${vaga.tipo}
+                        </span>
+
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                            ${vaga.modalidade}
+                        </span>
+
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
+                            ${vaga.area}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="text-right">
+
+                    <p class="text-3xl font-bold text-[#0f8b71]">
+                        ${vaga.total_candidatos || 0}
+                    </p>
+
+                    <p class="text-gray-400 text-sm">
+                        candidatos
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+
+                <div class="bg-slate-50 p-4 rounded-2xl">
+                    <p class="text-gray-400 text-sm mb-1">Localização</p>
+                    <p class="font-semibold">
+                         ${vaga.cidade} - ${vaga.uf}
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-2xl">
+                    <p class="text-gray-400 text-sm mb-1">Salário</p>
+                    <p class="font-semibold">
+                        R$ ${vaga.salario || "Não informado"}
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-2xl">
+                    <p class="text-gray-400 text-sm mb-1">Faixa Etária</p>
+                    <p class="font-semibold">
+                         ${vaga.idade_minima} - ${vaga.idade_maxima} anos
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="mt-6">
+
+                <p class="text-gray-500 text-sm mb-2">
+                    Descrição da vaga
+                </p>
+
+                <p class="text-slate-700 leading-relaxed">
+                    ${vaga.descricao}
+                </p>
+
+            </div>
+
+            <div class="mt-6 flex gap-3 flex-wrap">
+
+    <button onclick="trocarAba('candidaturas')"
+        class="bg-[#0f8b71] hover:bg-[#0d7a63] text-white px-5 py-3 rounded-xl font-semibold transition">
+        Ver candidatos
+    </button>
+
+    <button onclick="editarVaga(${vaga.id_vaga})"
+    class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-3 rounded-xl font-semibold transition flex items-center gap-2">
+
+    <i class="fa-solid fa-pen"></i>
+    Editar vaga
+
+</button>
+
+    <button onclick="deletarVaga(${vaga.id_vaga})"
+        class="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl font-semibold transition flex items-center gap-2">
+        
+        <i class="fa-solid fa-trash"></i>
+        Deletar vaga
+
+    </button>
+
+</div>
+
+        </div>
+        `
+            })
+
+            document.getElementById("total-vagas").innerText = vagas.length
+            document.getElementById("total-candidaturas").innerText = totalCandidaturas
+
+        } catch (erro) {
+            console.error(erro)
+            alert("Erro ao carregar vagas")
+        }
+    }
+
+    async function carregarTotalEntrevistas() {
+
+        try {
+
+            const resposta = await fetch(
+                `http://localhost:3000/totalEntrevistas/${idEmpresa}`,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            )
+
+            const dados = await resposta.json()
+
+            document.getElementById("total-entrevistas").innerText =
+                dados.total || 0
+
+        } catch (erro) {
+
+            console.log(erro)
+        }
+    }
+
+    carregarVagas()
+    carregarTotalEntrevistas()
+
+    // ================= OUTROS =================
+    function toggleScreens() {
+        document.getElementById('dashboard').classList.toggle('hidden')
+        document.getElementById('form-vaga').classList.toggle('hidden')
+    }
+
+    function addTag(tipo) {
+        let input = document.getElementById(`input-${tipo.slice(0, -1)}`)
+        let lista = document.getElementById(`lista-${tipo}`)
+
+        if (input.value.trim() === "") return
+
+        let tag = document.createElement("div")
+        tag.className = "bg-green-100 text-green-700 px-3 py-1 rounded-full flex items-center gap-2"
+
+        tag.innerHTML = `
+                ${input.value}
+                <button onclick="this.parentElement.remove()" class="font-bold">x</button>
+            `
+
+        lista.appendChild(tag)
+        input.value = ""
+    }
+
+
+
+    // VER PERFIL
+    let candidaturaAtual = null
+
+    async function verPerfil(idUsuario, idCandidatura) {
+
+        candidaturaAtual = idCandidatura
+
+        try {
+
+            const resposta = await fetch(`http://localhost:3000/perfilCandidato/${idUsuario}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                }
+            })
+
+            if (!resposta.ok) {
+                throw new Error("Erro na API")
+            }
+
+            const dados = await resposta.json()
+
+            console.log("DADOS PERFIL:", dados)
+
+            // FOTO
+            document.getElementById("perfil-foto").src =
+                dados.foto_perfil
+                    ? `http://localhost:3000/uploads/${dados.foto_perfil}`
+                    : "img/default.png"
+
+            // INFORMAÇÕES
+            document.getElementById("perfil-nome").innerText =
+                dados.nome_completo || "Não informado"
+
+            document.getElementById("perfil-email").innerText =
+                dados.email || "Não informado"
+
+            document.getElementById("perfil-telefone").innerText =
+                dados.telefone || "Não informado"
+
+            document.getElementById("perfil-local").innerText =
+                `${dados.cidade || "-"} - ${dados.uf || "-"}`
+
+            document.getElementById("perfil-escolaridade").innerText =
+                dados.escolaridade || "Não informado"
+
+            document.getElementById("perfil-instituicao").innerText =
+                dados.instituicao || "Não informado"
+
+            document.getElementById("perfil-curso").innerText =
+                dados.curso || "Não informado"
+
+            let habilidades = "Não informado"
+
+            if (dados.habilidades) {
+
+                try {
+
+                    // tenta converter JSON
+                    const lista = JSON.parse(dados.habilidades)
+
+                    if (Array.isArray(lista)) {
+                        habilidades = lista.join(", ")
+                    } else {
+                        habilidades = dados.habilidades
+                    }
+
+                } catch {
+
+                    habilidades = dados.habilidades
+                }
+            }
+
+            document.getElementById("perfil-habilidades").innerText = habilidades
+            document.getElementById("perfil-sobre").innerText =
+                dados.sobre_voce || "Sem descrição"
+
+            // CURRÍCULO
+            const cv = document.getElementById("perfil-cv")
+
+            if (dados.arquivo_pdf && dados.arquivo_pdf !== "") {
+
+                cv.href = `http://localhost:3000/uploads/${dados.arquivo_pdf}`
+                cv.style.display = "inline-block"
+
+            } else {
+
+                cv.style.display = "none"
+            }
+
+            // ABRIR MODAL
+            document.getElementById("modal-perfil").classList.remove("hidden")
+
+        } catch (erro) {
+
+            console.error("ERRO PERFIL:", erro)
+            alert("Erro ao carregar perfil do candidato")
+        }
+    }
+
+    // Fechar perfil
+    function fecharPerfil() {
+        document.getElementById("modal-perfil").classList.add("hidden")
+    }
+
+    // CARREGAR CANDIDATURAS 
+    async function carregarCandidaturas() {
+
+        const lista = document.getElementById("lista-candidaturas")
+        const filtroIdade = document.getElementById("filtro-idade").value
+        const filtroVaga = document.getElementById("filtro-vaga").value
+        const busca = document.getElementById("busca-candidato").value.toLowerCase()
+
+        try {
+
+            const resposta = await fetch(
+                `http://localhost:3000/candidatosEmpresa/${idEmpresa}`,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            )
+
+            const dados = await resposta.json()
+            
+
+            console.log("CANDIDATURAS:", dados)
+
+            if (!Array.isArray(dados)) {
+
+                console.log("Resposta inválida:", dados)
+
+                alert("Erro ao carregar candidaturas")
+
+                return
+            }
+
+            lista.innerHTML = ""
+            // preencher select de vagas
+            const selectVaga = document.getElementById("filtro-vaga")
+            selectVaga.innerHTML = `<option value="">Todas vagas</option>`
+
+            const vagasUnicas = [...new Set(dados.map(d => d.titulo_vaga))]
+
+            vagasUnicas.forEach(v => {
+                selectVaga.innerHTML += `<option value="${v}">${v}</option>`
+            })
+
+            let filtrados = dados.filter(c => {
+
+                // filtro nome
+                if (busca && !c.nome_completo.toLowerCase().includes(busca)) return false
+
+                // filtro vaga
+                if (filtroVaga && c.titulo_vaga !== filtroVaga) return false
+
+                // filtro idade
+                const idade = calcularIdade(c.data_nasc)
+
+                if (filtroIdade === "14-17" && !(idade >= 14 && idade <= 17)) return false
+                if (filtroIdade === "18-24" && !(idade >= 18 && idade <= 24)) return false
+                if (filtroIdade === "25+" && !(idade >= 25)) return false
+
+                return true
+            })
+
+            filtrados.forEach(c => {
+
+                lista.innerHTML += `
+            <div class="bg-white p-4 rounded-xl flex justify-between items-center shadow-sm">
+
+                <div class="flex items-center gap-3">
+                    <img src="http://localhost:3000/uploads/${c.foto_perfil || 'default.png'}" 
+                         class="w-12 h-12 rounded-full object-cover">
+
+                    <div>
+                        <p class="font-bold">${c.nome_completo}</p>
+                        <p class="text-sm text-gray-400">${c.titulo_vaga}</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="verPerfil('${c.id_usuario}', '${c.id_candidatura}')"
+                        class="bg-[#0f8b71] hover:bg-[#0d7a63] text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        Ver perfil
+                    </button>
+
+                    <button onclick="irEntrevista(${c.id_candidatura})"
+                      class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        Entrevista
+                    </button>
+                </div>
+
+            </div>
+        `
+            })
+
+        } catch (erro) {
+            console.error(erro)
+            alert("Erro ao carregar candidaturas")
+        }
+    }
+
+
+    //CALCULAR IDADE
+    function calcularIdade(dataNascimento) {
+        const hoje = new Date();
+        const nasc = new Date(dataNascimento);
+
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        const m = hoje.getMonth() - nasc.getMonth();
+
+        if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+            idade--;
+        }
+
+        return idade;
+    }
+
+
+    // TROCAR ABA
+    function trocarAba(aba) {
+
+        const btnVagas = document.getElementById("aba-vagas")
+        const btnCand = document.getElementById("aba-candidaturas")
+        const btnNotif = document.getElementById("aba-notificacoes")
+
+        // RESET
+        btnVagas.className = "px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium"
+        btnCand.className = "px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium"
+        btnNotif.className = "px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium relative"
+
+        document.getElementById("lista-vagas").classList.add("hidden")
+        document.getElementById("estado-vazio").classList.add("hidden")
+        document.getElementById("tela-candidaturas").classList.add("hidden")
+
+        if (aba === "vagas") {
+
+            btnVagas.className =
+                "px-4 py-2 rounded-full bg-[#0f8b71] text-white font-medium"
+
+            carregarVagas()
+        }
+
+        if (aba === "candidaturas") {
+
+            btnCand.className =
+                "px-4 py-2 rounded-full bg-[#0f8b71] text-white font-medium"
+
+            document.getElementById("tela-candidaturas").classList.remove("hidden")
+
+            carregarCandidaturas()
+        }
+
+        if (aba === "notificacoes") {
+
+            btnNotif.className =
+                "px-4 py-2 rounded-full bg-[#0f8b71] text-white font-medium relative"
+        }
+    }
+
+
+    // Ouvintes para os filtros funcionarem em tempo real
+    document.getElementById("filtro-idade").addEventListener("change", carregarCandidaturas);
+    document.getElementById("filtro-vaga").addEventListener("change", carregarCandidaturas);
+    document.getElementById("busca-candidato").addEventListener("input", carregarCandidaturas);
+
+
+    // STATUS 
+    async function salvarStatus() {
+
+        if (!candidaturaAtual) {
+            alert("Selecione um candidato")
+            return
+        }
+
+        const status =
+            document.getElementById("status-candidato").value
+
+        try {
+
+            const resposta = await fetch(
+                `http://localhost:3000/candidaturaStatus/${candidaturaAtual}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({ status })
+                }
+            )
+
+            if (!resposta.ok) {
+                throw new Error()
+            }
+
+            alert("Status atualizado com sucesso!")
+            carregarCandidaturas()
+
+        } catch (erro) {
+
+            console.error(erro)
+            alert("Erro ao atualizar status")
+        }
+    }
+
+    // SAIR 
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const btn = document.getElementById("voltar_inicio")
+
+        if (btn) {
+            btn.onclick = () => {
+                localStorage.removeItem("token")
+                localStorage.removeItem("id_usuario")
+                localStorage.removeItem("id_empresa")
+
+                window.location.href = "index.html"
+            }
+        }
+
+    })
+
+    // MARCAR ENTREVISTA
+    function irEntrevista(idCandidatura) {
+
+        if (!idCandidatura) {
+            alert("Candidatura inválida")
+            return
+        }
+
+        localStorage.setItem("id_candidatura", idCandidatura)
+
+        window.location.href = "marcarEntrevista.html"
+    }
+
+    // DELETAR VAGA
+    async function deletarVaga(idVaga) {
+
+        const confirmar = confirm("Tem certeza que deseja deletar esta vaga?")
+
+        if (!confirmar) return
+
+        try {
+
+            const resposta = await fetch(`http://localhost:3000/deletarVaga/${idVaga}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            })
+
+            const resultado = await resposta.json()
+
+            if (resultado.erro) {
+                alert(resultado.erro)
+                return
+            }
+
+            carregarVagas()
+
+            alert("Vaga deletada com sucesso!")
+
+        } catch (erro) {
+
+            console.error(erro)
+
+            alert("Erro ao deletar vaga")
+        }
+    }
+
+    async function editarVaga(idVaga) {
+
+        try {
+
+            const resposta = await fetch(
+                `http://localhost:3000/vagasEmpresa/${idEmpresa}`,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            )
+
+            const vagas = await resposta.json()
+
+            const vaga = vagas.find(v => v.id_vaga == idVaga)
+
+            if (!vaga) {
+                alert("Vaga não encontrada")
+                return
+            }
+
+            editandoVaga = idVaga
+
+            // abrir tela
+            document.getElementById('dashboard').classList.add('hidden')
+            document.getElementById('form-vaga').classList.remove('hidden')
+
+            // preencher inputs
+            document.getElementById("titulo").value = vaga.titulo_vaga
+            document.getElementById("tipo").value = vaga.tipo
+            document.getElementById("modalidade").value = vaga.modalidade
+            document.getElementById("select-area").value = vaga.area
+            document.getElementById("descricao").value = vaga.descricao
+            document.getElementById("cidade").value = vaga.cidade
+            document.getElementById("uf").value = vaga.uf
+
+            document.querySelector('input[placeholder*="R$"]').value =
+                vaga.salario || ""
+
+            document.querySelectorAll('input[type="number"]')[0].value =
+                vaga.idade_minima
+
+            document.querySelectorAll('input[type="number"]')[1].value =
+                vaga.idade_maxima
+
+            // requisitos
+            document.getElementById("lista-requisitos").innerHTML = ""
+
+            if (vaga.requisitos) {
+
+                let requisitos = []
+
+                try {
+                    requisitos = JSON.parse(vaga.requisitos)
+                } catch {
+                    requisitos = []
+                }
+
+                requisitos.forEach(req => {
+
+                    const tag = document.createElement("div")
+
+                    tag.className =
+                        "bg-green-100 text-green-700 px-3 py-1 rounded-full flex items-center gap-2"
+
+                    tag.innerHTML = `
+                ${req}
+                <button onclick="this.parentElement.remove()" class="font-bold">x</button>
+            `
+
+                    document
+                        .getElementById("lista-requisitos")
+                        .appendChild(tag)
+                })
+            }
+
+            // mudar botão
+            document.querySelector("#form-vaga button[onclick='publicarVaga()']")
+                .innerText = "Salvar Alterações"
+
+        } catch (erro) {
+
+            console.log(erro)
+
+            alert("Erro ao carregar vaga")
+        }
+    }
+
+</script>
+
+</html>
