@@ -78,11 +78,11 @@
 
 
         <a href="notificacaoCandidato.html" class="btn_item_navegacao">
-
             <i class="fas fa-bell"></i>
-
             Notificações
-
+            <span id="contadorNotificacoes" class="contador_notificacoes" style="display: none;">
+                0
+            </span>
         </a>
 
 
@@ -799,6 +799,66 @@
 
         };
 
+        // ================= CONTADOR DE NOTIFICAÇÕES =================
+
+    async function carregarContadorNotificacoes() {
+
+        const contador = document.getElementById("contadorNotificacoes")
+
+        // Se o contador não existir na página, não faz nada
+        if (!contador) {
+            return
+        }
+
+        // Pega o token do candidato
+        const tokenAtual = localStorage.getItem("token")
+
+        if (!tokenAtual) {
+            return
+        }
+
+        try {
+
+            const resposta = await fetch("http://localhost:3000/notificacoes", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + tokenAtual
+                }
+            })
+
+            const dados = await resposta.json()
+
+            console.log("Notificações recebidas:", dados)
+
+            if (!resposta.ok) {
+                console.error("Erro ao buscar notificações:", dados)
+                return
+            }
+
+            const quantidade = Number(dados.naoLidas) || 0
+
+            if (quantidade > 0) {
+
+                contador.textContent = quantidade
+                contador.style.display = "inline-flex"
+
+            } else {
+
+                contador.textContent = "0"
+                contador.style.display = "none"
+
+            }
+
+        } catch (erro) {
+
+            console.error("Erro ao carregar contador:", erro)
+
+        }
+    }
+
+
+    // Carrega o contador quando a página abrir
+    carregarContadorNotificacoes()
     </script>
 
 </body>

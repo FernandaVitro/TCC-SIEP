@@ -1159,12 +1159,19 @@ app.get("/candidatosEmpresa/:id_empresa", autenticarToken, async (req, res) => {
     }
 })
 
-// ATUALIZAR STATUS DA CANDIDATURA 
+// ============================================================
+// ATUALIZAR STATUS DA CANDIDATURA
+// ============================================================
+
 app.put("/candidaturaStatus/:id", autenticarToken, async (req, res) => {
+
     try {
+
         const { status } = req.body
         const id = req.params.id
 
+
+        // Status permitidos
         const statusValidos = [
             "Em análise",
             "Entrevista marcada",
@@ -1172,9 +1179,50 @@ app.put("/candidaturaStatus/:id", autenticarToken, async (req, res) => {
             "Não selecionado"
         ]
 
+
+        // Verificar se o status é válido
         if (!statusValidos.includes(status)) {
-            return res.status(400).json({ erro: "Status inválido" })
+
+            return res.status(400).json({
+                erro: "Status inválido"
+            })
+
         }
+
+
+        // ========================================================
+        // BUSCAR A CANDIDATURA
+        // ========================================================
+
+        const [candidaturas] = await conexao.query(`
+            SELECT
+                id_candidatura,
+                id_usuario,
+                status
+            FROM vagas_candidatar
+            WHERE id_candidatura = ?
+        `, [id])
+
+
+        // Candidatura não encontrada
+        if (candidaturas.length === 0) {
+
+            return res.status(404).json({
+                erro: "Candidatura não encontrada"
+            })
+
+        }
+
+
+        const candidatura = candidaturas[0]
+
+        const idUsuario = candidatura.id_usuario
+        const statusAnterior = candidatura.status
+
+
+        // ========================================================
+        // ATUALIZAR STATUS
+        // ========================================================
 
         await conexao.query(`
             UPDATE vagas_candidatar
@@ -1182,11 +1230,119 @@ app.put("/candidaturaStatus/:id", autenticarToken, async (req, res) => {
             WHERE id_candidatura = ?
         `, [status, id])
 
-        res.json({ ok: true })
+
+        // ========================================================
+        // SE O STATUS NÃO MUDOU, NÃO CRIA OUTRA NOTIFICAÇÃO
+        // ========================================================
+
+        if (statusAnterior === status) {
+
+            return res.json({
+                ok: true,
+                mensagem: "Status já estava definido dessa forma"
+            })
+
+        }
+
+
+        // ========================================================
+        // DEFINIR TIPO E MENSAGEM DA NOTIFICAÇÃO
+        // ========================================================
+
+        let tipo = "status_candidatura"
+        let mensagem = ""
+
+
+        if (status === "Aprovado") {
+
+            tipo = "resultado_candidatura"
+
+            mensagem =
+                "Parabéns! Sua candidatura foi aprovada."
+
+
+        } else if (status === "Não selecionado") {
+
+            tipo = "resultado_candidatura"
+
+            mensagem =
+                "Sua candidatura foi encerrada. Você não foi selecionado para esta vaga."
+
+
+        } else if (status === "Entrevista marcada") {
+
+            tipo = "entrevista_agendada"
+
+            mensagem =
+                "Sua candidatura foi atualizada e uma entrevista foi marcada."
+
+
+        } else if (status === "Em análise") {
+
+            tipo = "status_candidatura"
+
+            mensagem =
+                "Sua candidatura está em análise pela empresa."
+
+        }
+
+
+        // ========================================================
+        // CRIAR NOTIFICAÇÃO PARA O CANDIDATO
+        // ========================================================
+
+        await conexao.query(`
+            INSERT INTO notificacoes
+            (
+                id_usuario,
+                id_empresa,
+                id_candidatura,
+                mensagem,
+                tipo,
+                lida,
+                data_envio
+            )
+            VALUES
+            (
+                ?,
+                NULL,
+                ?,
+                ?,
+                ?,
+                0,
+                NOW()
+            )
+        `, [
+            idUsuario,
+            id,
+            mensagem,
+            tipo
+        ])
+
+
+        // ========================================================
+        // RESPOSTA
+        // ========================================================
+
+        res.json({
+            ok: true,
+            mensagem: "Status atualizado e candidato notificado"
+        })
+
 
     } catch (erro) {
-        res.status(500).json({ erro: "Erro ao atualizar status" })
+
+        console.error(
+            "Erro ao atualizar status da candidatura:",
+            erro
+        )
+
+        res.status(500).json({
+            erro: "Erro ao atualizar status"
+        })
+
     }
+
 })
 
 // TOTAL DE ENTREVISTAS DA EMPRESA
@@ -1315,6 +1471,359 @@ app.get('/candidaturasUsuario/:id_usuario', autenticarToken, async (req, res) =>
 
         res.status(500).json({
             erro: "Erro ao buscar candidaturas."
+        });
+
+    }
+
+});
+
+// ==================== NOTIFICAÇÕES ====================
+// Funciona para CANDIDATO e EMPRESA.
+// O tipo de usuário é identificado pelo token JWT.
+
+// ======================================================
+// FUNÇÃO PARA IDENTIFICAR O DONO DA NOTIFICAÇÃO
+// ======================================================
+
+function donoNotificacao(req) {
+
+    // Se o token possui id_usuario, é candidato
+    if (req.user && req.user.id_usuario) {
+
+        return {
+            campo: "id_usuario",
+            valor: req.user.id_usuario
+        };
+
+    }
+
+    // Se o token possui id_empresa, é empresa
+    if (req.user && req.user.id_empresa) {
+
+        return {
+            campo: "id_empresa",
+            valor: req.user.id_empresa
+        };
+
+    }
+
+    // Token válido, mas sem identificação de candidato/empresa
+    return null;
+}
+
+
+// ======================================================
+// LISTAR NOTIFICAÇÕES + CONTADOR DE NÃO LIDAS
+// ======================================================
+
+app.get("/notificacoes", autenticarToken, async (req, res) => {
+
+    try {
+
+        const dono = donoNotificacao(req);
+
+        // Verifica se o token identifica um candidato ou empresa
+        if (!dono) {
+
+            return res.status(401).json({
+                erro: "Usuário não autenticado"
+            });
+
+        }
+
+        // Busca as notificações do usuário logado
+        const [notificacoes] = await conexao.query(`
+
+            SELECT
+                id_notificacao,
+                id_usuario,
+                id_empresa,
+                id_candidatura,
+                mensagem,
+                tipo,
+                lida,
+                data_envio
+
+            FROM notificacoes
+
+            WHERE ${dono.campo} = ?
+
+            ORDER BY data_envio DESC
+
+        `, [dono.valor]);
+
+
+        // Conta somente as notificações não lidas
+        const [resultadoContador] = await conexao.query(`
+
+            SELECT COUNT(*) AS naoLidas
+
+            FROM notificacoes
+
+            WHERE ${dono.campo} = ?
+
+            AND lida = 0
+
+        `, [dono.valor]);
+
+
+        res.json({
+
+            notificacoes: notificacoes,
+
+            naoLidas: resultadoContador[0].naoLidas
+
+        });
+
+    } catch (erro) {
+
+        console.error("Erro ao buscar notificações:", erro);
+
+        res.status(500).json({
+
+            erro: "Erro ao buscar notificações"
+
+        });
+
+    }
+
+});
+
+
+// ======================================================
+// MARCAR TODAS COMO LIDAS
+// ======================================================
+// IMPORTANTE:
+// Essa rota vem ANTES de /:id/lida.
+
+app.put("/notificacoes/lerTodas", autenticarToken, async (req, res) => {
+
+    try {
+
+        const dono = donoNotificacao(req);
+
+        if (!dono) {
+
+            return res.status(401).json({
+                erro: "Usuário não autenticado"
+            });
+
+        }
+
+        await conexao.query(`
+
+            UPDATE notificacoes
+
+            SET lida = 1
+
+            WHERE ${dono.campo} = ?
+
+            AND lida = 0
+
+        `, [dono.valor]);
+
+
+        res.json({
+
+            ok: true,
+
+            mensagem: "Todas as notificações foram marcadas como lidas"
+
+        });
+
+    } catch (erro) {
+
+        console.error("Erro ao marcar notificações como lidas:", erro);
+
+        res.status(500).json({
+
+            erro: "Erro ao marcar notificações como lidas"
+
+        });
+
+    }
+
+});
+
+
+// ======================================================
+// MARCAR UMA NOTIFICAÇÃO COMO LIDA
+// ======================================================
+
+app.put("/notificacoes/:id/lida", autenticarToken, async (req, res) => {
+
+    try {
+
+        const dono = donoNotificacao(req);
+
+        if (!dono) {
+
+            return res.status(401).json({
+                erro: "Usuário não autenticado"
+            });
+
+        }
+
+        const { id } = req.params;
+
+
+        const [resultado] = await conexao.query(`
+
+            UPDATE notificacoes
+
+            SET lida = 1
+
+            WHERE id_notificacao = ?
+
+            AND ${dono.campo} = ?
+
+        `, [id, dono.valor]);
+
+
+        if (resultado.affectedRows === 0) {
+
+            return res.status(404).json({
+
+                erro: "Notificação não encontrada"
+
+            });
+
+        }
+
+
+        res.json({
+
+            ok: true,
+
+            mensagem: "Notificação marcada como lida"
+
+        });
+
+    } catch (erro) {
+
+        console.error("Erro ao marcar notificação como lida:", erro);
+
+        res.status(500).json({
+
+            erro: "Erro ao marcar notificação como lida"
+
+        });
+
+    }
+
+});
+
+
+// ======================================================
+// EXCLUIR UMA NOTIFICAÇÃO
+// ======================================================
+
+app.delete("/notificacoes/:id", autenticarToken, async (req, res) => {
+
+    try {
+
+        const dono = donoNotificacao(req);
+
+        if (!dono) {
+
+            return res.status(401).json({
+                erro: "Usuário não autenticado"
+            });
+
+        }
+
+        const { id } = req.params;
+
+
+        const [resultado] = await conexao.query(`
+
+            DELETE FROM notificacoes
+
+            WHERE id_notificacao = ?
+
+            AND ${dono.campo} = ?
+
+        `, [id, dono.valor]);
+
+
+        if (resultado.affectedRows === 0) {
+
+            return res.status(404).json({
+
+                erro: "Notificação não encontrada"
+
+            });
+
+        }
+
+
+        res.json({
+
+            ok: true,
+
+            mensagem: "Notificação excluída"
+
+        });
+
+    } catch (erro) {
+
+        console.error("Erro ao excluir notificação:", erro);
+
+        res.status(500).json({
+
+            erro: "Erro ao excluir notificação"
+
+        });
+
+    }
+
+});
+
+
+// ======================================================
+// EXCLUIR TODAS AS NOTIFICAÇÕES
+// ======================================================
+
+app.delete("/notificacoes", autenticarToken, async (req, res) => {
+
+    try {
+
+        const dono = donoNotificacao(req);
+
+        if (!dono) {
+
+            return res.status(401).json({
+                erro: "Usuário não autenticado"
+            });
+
+        }
+
+
+        const [resultado] = await conexao.query(`
+
+            DELETE FROM notificacoes
+
+            WHERE ${dono.campo} = ?
+
+        `, [dono.valor]);
+
+
+        res.json({
+
+            ok: true,
+
+            excluidas: resultado.affectedRows
+
+        });
+
+    } catch (erro) {
+
+        console.error("Erro ao excluir notificações:", erro);
+
+        res.status(500).json({
+
+            erro: "Erro ao excluir notificações"
+
         });
 
     }

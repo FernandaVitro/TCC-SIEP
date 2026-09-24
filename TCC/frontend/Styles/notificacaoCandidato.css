@@ -424,4 +424,396 @@
 
 
 
+/* =========================================================
+   NOTIFICAÇÕES - SIEP
+   CSS ADICIONAL
+   Não altera o CSS existente
+   ========================================================= */
+
+
+/* =========================================================
+   ÁREA PRINCIPAL DAS NOTIFICAÇÕES
+   ========================================================= */
+
+.conteudo_notificacoes {
+    margin-left: 260px;
+    padding: 40px;
+    width: 100%;
+    max-width: 1000px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.cabecalho_notificacoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+}
+
+.cabecalho_notificacoes h1 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--texto-principal);
+}
+
+
+/* =========================================================
+   BOTÕES DO CABEÇALHO
+   ========================================================= */
+
+.acoes_notificacoes {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn_marcar_todas,
+.btn_excluir_todas {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: 0.2s;
+}
+
+.btn_marcar_todas {
+    background: #eff6ff;
+    color: var(--azul-primario);
+}
+
+.btn_marcar_todas:hover {
+    background: #dbeafe;
+}
+
+.btn_excluir_todas {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.btn_excluir_todas:hover {
+    background: #fee2e2;
+}
+
+
+/* =========================================================
+   CONTADOR DE NOTIFICAÇÕES
+   ========================================================= */
+
+.contador_notificacoes {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: auto;
+
+    background: var(--azul-primario);
+    color: white;
+
+    border-radius: 20px;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   LISTA DE NOTIFICAÇÕES
+   ========================================================= */
+
+.lista_notificacoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   NOTIFICAÇÃO
+   ========================================================= */
+
+.notificacao_item {
+    background: #ffffff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+
+    padding: 18px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+/* Hover */
+
+.notificacao_item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================================================
+   NOTIFICAÇÃO NÃO LIDA
+   ========================================================= */
+
+.notificacao_item.nao_lida {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+
+/* =========================================================
+   NOTIFICAÇÃO LIDA
+   ========================================================= */
+
+.notificacao_item.lida {
+    background: #ffffff;
+    opacity: 0.85;
+}
+
+
+/* =========================================================
+   CONTEÚDO DA NOTIFICAÇÃO
+   ========================================================= */
+
+.notificacao_conteudo {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    min-width: 0;
+    flex: 1;
+}
+
+
+/* =========================================================
+   ÍCONE
+   ========================================================= */
+
+.notificacao_icone {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+    color: var(--azul-primario);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+
+/* Ícone de notificação não lida */
+
+.notificacao_item.nao_lida .notificacao_icone {
+    background: #dbeafe;
+}
+
+
+/* =========================================================
+   TEXTO
+   ========================================================= */
+
+.notificacao_texto {
+    flex: 1;
+    min-width: 0;
+}
+
+
+.notificacao_mensagem {
+    color: var(--texto-principal);
+
+    font-size: 15px;
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+
+/* Deixa a mensagem não lida mais destacada */
+
+.notificacao_item.nao_lida .notificacao_mensagem {
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   DATA
+   ========================================================= */
+
+.notificacao_data {
+    color: var(--texto-suave);
+
+    font-size: 12px;
+
+    margin-top: 6px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+/* =========================================================
+   INDICADOR DE NÃO LIDA
+   ========================================================= */
+
+.indicador_nao_lida {
+    width: 9px;
+    height: 9px;
+
+    min-width: 9px;
+
+    background: var(--azul-primario);
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   BOTÃO EXCLUIR
+   ========================================================= */
+
+.btn_excluir_notificacao {
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #94a3b8;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.2s;
+
+    flex-shrink: 0;
+}
+
+
+.btn_excluir_notificacao:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   MENSAGENS
+   ========================================================= */
+
+.mensagem_notificacoes {
+    background: #ffffff;
+
+    border: 1px solid var(--cor-borda);
+
+    border-radius: 12px;
+
+    padding: 50px 20px;
+
+    text-align: center;
+
+    color: var(--texto-suave);
+
+    font-size: 15px;
+}
+
+
+.mensagem_notificacoes i {
+    font-size: 28px;
+
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .conteudo_notificacoes {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+
+    .cabecalho_notificacoes {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .acoes_notificacoes {
+        width: 100%;
+        flex-direction: column;
+    }
+
+
+    .btn_marcar_todas,
+    .btn_excluir_todas {
+        width: 100%;
+        justify-content: center;
+    }
+
+
+    .notificacao_item {
+        padding: 15px;
+    }
+
+
+    .notificacao_conteudo {
+        gap: 10px;
+    }
+
+
+    .notificacao_icone {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+    }
+
+
+    .notificacao_mensagem {
+        font-size: 14px;
+    }
+
+}
+
+
+
+
     

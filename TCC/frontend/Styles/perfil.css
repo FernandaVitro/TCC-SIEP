@@ -458,5 +458,127 @@
     color: white !important;
 }
 
+/* =========================================================
+   NOTIFICAÇÕES - SIEP
+   CSS ADICIONAL
+   Não altera o CSS existente
+   ========================================================= */
 
-    
+
+/* =========================================================
+   ÁREA PRINCIPAL DAS NOTIFICAÇÕES
+   ========================================================= */
+
+.conteudo_notificacoes {
+    margin-left: 260px;
+    padding: 40px;
+    width: 100%;
+    max-width: 1000px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.cabecalho_notificacoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+}
+
+.cabecalho_notificacoes h1 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--texto-principal);
+}
+
+
+/* =========================================================
+   BOTÕES DO CABEÇALHO
+   ========================================================= */
+
+.acoes_notificacoes {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn_marcar_todas,
+.btn_excluir_todas {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: 0.2s;
+}
+
+.btn_marcar_todas {
+    background: #eff6ff;
+    color: var(--azul-primario);
+}
+
+.btn_marcar_todas:hover {
+    background: #dbeafe;
+}
+
+.btn_excluir_todas {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.btn_excluir_todas:hover {
+    background: #fee2e2;
+}
+
+
+/* =========================================================
+   CONTADOR DE NOTIFICAÇÕES
+   ========================================================= */
+
+.contador_notificacoes {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: auto;
+
+    background: var(--azul-primario);
+    color: white;
+
+    border-radius: 20px;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* NOTIFICAÇÃO ÍCONE */
+
+
+.notificacao_icone {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+    color: var(--azul-primario);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}

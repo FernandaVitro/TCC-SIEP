@@ -26,7 +26,13 @@
         <a href="entrevistaCandidato.html" class="btn_item_navegacao"><i class="fas fa-calendar-alt"> </i>
             Entrevistas</a>
         <a href="perfil.html" class="btn_item_navegacao ativo"><i class="fas fa-user"></i> Meu Perfil</a>
-        <a href="notificacaoCandidato.html" class="btn_item_navegacao"><i class="fas fa-bell"></i> Notificações</a>
+        <a href="notificacaoCandidato.html" class="btn_item_navegacao">
+            <i class="fas fa-bell"></i>
+            Notificações
+            <span id="contadorNotificacoes" class="contador_notificacoes" style="display: none;">
+                0
+            </span>
+        </a>
 
         <div class="div_espacador_sair">
             <a href="#" class="btn_item_navegacao" id="voltar_inicio">
@@ -174,13 +180,11 @@
             <p class="recuperar-sub">Digite sua senha atual e a nova senha</p>
 
             <div class="input-group">
-                <input type="password" id="senhaAtual" placeholder="Senha atual" autocomplete="new-password"
-    value="">
+                <input type="password" id="senhaAtual" placeholder="Senha atual" autocomplete="new-password" value="">
             </div>
 
             <div class="input-group active">
-                <input type="password" id="novaSenha" placeholder="Nova senha" autocomplete="new-password"
-    value="">
+                <input type="password" id="novaSenha" placeholder="Nova senha" autocomplete="new-password" value="">
             </div>
 
             <button id="btnAtualizarSenha">Atualizar senha</button>
@@ -236,6 +240,67 @@
 
     const id = localStorage.getItem("id_usuario")
     const token = localStorage.getItem("token")
+
+    // ================= CONTADOR DE NOTIFICAÇÕES =================
+
+    async function carregarContadorNotificacoes() {
+
+        const contador = document.getElementById("contadorNotificacoes")
+
+        // Se o contador não existir na página, não faz nada
+        if (!contador) {
+            return
+        }
+
+        // Pega o token do candidato
+        const tokenAtual = localStorage.getItem("token")
+
+        if (!tokenAtual) {
+            return
+        }
+
+        try {
+
+            const resposta = await fetch("http://localhost:3000/notificacoes", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + tokenAtual
+                }
+            })
+
+            const dados = await resposta.json()
+
+            console.log("Notificações recebidas:", dados)
+
+            if (!resposta.ok) {
+                console.error("Erro ao buscar notificações:", dados)
+                return
+            }
+
+            const quantidade = Number(dados.naoLidas) || 0
+
+            if (quantidade > 0) {
+
+                contador.textContent = quantidade
+                contador.style.display = "inline-flex"
+
+            } else {
+
+                contador.textContent = "0"
+                contador.style.display = "none"
+
+            }
+
+        } catch (erro) {
+
+            console.error("Erro ao carregar contador:", erro)
+
+        }
+    }
+
+
+    // Carrega o contador quando a página abrir
+    carregarContadorNotificacoes()
 
     // 🔐 PROTEÇÃO CORRETA
     if (!id || !token) {
@@ -527,6 +592,7 @@
             alert("Erro no servidor")
         }
     }
+
 
 </script>
 
