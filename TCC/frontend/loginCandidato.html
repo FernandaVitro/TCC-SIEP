@@ -22,15 +22,18 @@
             <h3>Recuperar senha</h3>
             <p class="recuperar-sub">Digite seus dados</p>
 
-            <div class="input-group ">
+            <div class="input-group">
+                <label for="cpfRecuperar">CPF</label>
                 <input type="text" id="cpfRecuperar" placeholder="CPF" maxlength="14" autocomplete="off">
             </div>
 
             <div class="input-group active">
+                <label for="novaSenhaRecuperar">Nova senha</label>
                 <input type="password" id="novaSenhaRecuperar" placeholder="Nova senha" autocomplete="new-password">
             </div>
 
             <div class="input-group">
+                <label for="respostaSeguranca">Resposta de segurança</label>
                 <input type="text" id="respostaSeguranca" placeholder="..." disabled autocomplete="off">
             </div>
 
@@ -41,15 +44,15 @@
         </div>
     </div>
 
-    <div class="page">
+    <main class="page">
 
-        <a href="#" class="back" id="btn_voltar_inicio">
+        <a href="#" class="back" id="btn_voltar_inicio" alt="Voltar para o início">
             ← Voltar para início
         </a>
 
         <div class="card">
 
-            <img src="img/logo.png" class="logo-quadrada">
+            <img src="img/logo.png" class="logo-quadrada" alt="Logo do SIEP">
 
             <h1>Bem-vindo de volta!</h1>
 
@@ -59,12 +62,12 @@
 
             <form id="form_login">
 
-                <label>CPF</label>
+                <label for="input_cpf">CPF</label>
                 <div class="input-group ">
                     <input type="text" id="input_cpf" maxlength="14" autocomplete="off">
                 </div>
 
-                <label>Senha</label>
+                <label for="input_senha">Senha</label>
                 <div class="input-group ">
                     <input type="password" id="input_senha" autocomplete="new-password">
                 </div>
@@ -86,7 +89,7 @@
 
         </div>
 
-    </div>
+    </main>
 
     <script>
 

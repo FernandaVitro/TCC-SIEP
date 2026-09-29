@@ -13,14 +13,14 @@
 
 <body>
 
-    <div class="div_container">
+    <main class="div_container">
 
         <div class="div_voltar">
-            <a href="#" id="voltar_inicio">← Voltar para início</a>
+            <a href="index.html" id="voltar_inicio">← Voltar para início</a>
         </div>
 
         <div class="div_cabecalho">
-            <img src="img/logo.png" class="logo-quadrada">
+            <img src="img/logo.png" class="logo-quadrada" alt="Logo do SIEP"> 
             <h1 class="titulo_principal">Cadastro Candidato</h1>
             <p class="texto_secundario">Preencha seus dados para continuar</p>
         </div>
@@ -31,91 +31,97 @@
             <div id="etapa2_indicador" class="etapa">2</div>
         </div>
 
-        <div id="etapa_1">
-            <div class="div_grupo">
-                <label class="label_padrao">Nome Completo</label>
-                <input id="nome_candidato" class="input_padrao" type="text" placeholder="Digite seu nome completo">
-            </div>
+        <form id="form_cadastro">
 
-            <div class="div_grupo">
-                <label class="label_padrao">Data de Nascimento</label>
-                <input id="data_nascimento" class="input_padrao" type="date">
-            </div>
-
-            <div class="div_dupla">
+            <!-- ETAPA 1 -->
+            <div id="etapa_1">
                 <div class="div_grupo">
-                    <label class="label_padrao">CPF</label>
-                    <input id="cpf" class="input_padrao" type="text" placeholder="000.000.000-00">
+                    <label for="nome_candidato" class="label_padrao">Nome Completo</label>
+                    <input id="nome_candidato" name="nome" class="input_padrao" type="text" placeholder="Digite seu nome completo" autocomplete="name">
                 </div>
+
                 <div class="div_grupo">
-                    <label class="label_padrao">RG</label>
-                    <input id="rg" class="input_padrao" type="text" placeholder="00.000.000-0">
+                    <label for="data_nascimento" class="label_padrao">Data de Nascimento</label>
+                    <input id="data_nascimento" name="data_nascimento" class="input_padrao" type="date" autocomplete="bday">
                 </div>
-            </div>
 
-            <div class="div_grupo">
-                <label class="label_padrao">Email</label>
-                <input id="email" class="input_padrao" type="email" placeholder="exemplo@email.com">
-            </div>
-
-            <div class="div_grupo">
-                <label class="label_padrao">Telefone</label>
-                <input id="telefone" class="input_padrao" type="text" placeholder="(00) 00000-0000">
-            </div>
-
-            <button class="btn_principal" onclick="irParaEtapa2()">Próxima Etapa</button>
-
-            <p class="texto_login">
-                Já tem conta? <a href="#" id="login_candidato">Fazer login</a>
-            </p>
-        </div>
-
-        <div id="etapa_2" class="oculto">
-            <div class="div_grupo">
-                <label class="label_padrao">Endereço</label>
-                <input id="endereco" class="input_padrao" type="text" placeholder="Rua, número, bairro">
-            </div>
-
-            <div class="div_dupla">
-                <div class="div_grupo" style="flex: 3;">
-                    <label class="label_padrao">Cidade</label>
-                    <input id="cidade" class="input_padrao" type="text">
+                <div class="div_dupla">
+                    <div class="div_grupo">
+                        <label for="cpf" class="label_padrao">CPF</label>
+                        <input id="cpf" name="cpf" class="input_padrao" type="text" placeholder="000.000.000-00" autocomplete="off">
+                    </div>
+                    <div class="div_grupo">
+                        <label for="rg" class="label_padrao">RG</label>
+                        <input id="rg" name="rg" class="input_padrao" type="text" placeholder="00.000.000-0" autocomplete="off">
+                    </div>
                 </div>
-                <div class="div_grupo" style="flex: 1;">
-                    <label class="label_padrao">UF</label>
-                    <select id="uf" class="select_padrao">
-                        <option value="">UF</option>
-                        <option value="SP">SP</option>
-                        <option value="RJ">RJ</option>
-                        <option value="MG">MG</option>
-                        <option value="ES">ES</option>
-                        <option value="PR">PR</option>
-                        <option value="SC">SC</option>
-                        <option value="RS">RS</option>
-                    </select>
+
+                <div class="div_grupo">
+                    <label for="email" class="label_padrao">Email</label>
+                    <input id="email" name="email" class="input_padrao" type="email" placeholder="exemplo@email.com" autocomplete="email">
                 </div>
+
+                <div class="div_grupo">
+                    <label for="telefone" class="label_padrao">Telefone</label>
+                    <input id="telefone" name="telefone" class="input_padrao" type="tel" placeholder="(00) 00000-0000" autocomplete="tel">
+                </div>
+
+                <button type="button" class="btn_principal" onclick="irParaEtapa2()">Próxima Etapa</button>
+
+                <p class="texto_login">
+                    Já tem conta? <a href="loginCandidato.html" id="login_candidato">Fazer login</a>
+                </p>
             </div>
 
-            <div class="div_grupo">
-                <label class="label_padrao">Senha</label>
-                <input id="senha" class="input_padrao" type="password" placeholder="Mínimo 6 caracteres">
+            <!-- ETAPA 2 -->
+            <div id="etapa_2" class="oculto">
+                <div class="div_grupo">
+                    <label for="endereco" class="label_padrao">Endereço</label>
+                    <input id="endereco" name="endereco" class="input_padrao" type="text" placeholder="Rua, número, bairro" autocomplete="street-address">
+                </div>
+
+                <div class="div_dupla">
+                    <div class="div_grupo" style="flex: 3;">
+                        <label for="cidade" class="label_padrao">Cidade</label>
+                        <input id="cidade" name="cidade" class="input_padrao" type="text" autocomplete="address-level2">
+                    </div>
+                    <div class="div_grupo" style="flex: 1;">
+                        <label for="uf" class="label_padrao">UF</label>
+                        <select id="uf" name="uf" class="select_padrao" autocomplete="address-level1">
+                            <option value="">UF</option>
+                            <option value="SP">SP</option>
+                            <option value="RJ">RJ</option>
+                            <option value="MG">MG</option>
+                            <option value="ES">ES</option>
+                            <option value="PR">PR</option>
+                            <option value="SC">SC</option>
+                            <option value="RS">RS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="div_grupo">
+                    <label for="senha" class="label_padrao">Senha</label>
+                    <input id="senha" name="senha" class="input_padrao" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                </div>
+
+                <div class="div_grupo">
+                    <label for="confirmar_senha" class="label_padrao">Confirmar Senha</label>
+                    <input id="confirmar_senha" name="confirmar_senha" class="input_padrao" type="password" placeholder="Repita sua senha" autocomplete="new-password">
+                </div>
+
+                <div class="div_botoes">
+                    <button type="button" class="btn_secundario" onclick="voltarEtapa1()">Voltar</button>
+                    <button type="button" id="btn_cadastrar" class="btn_principal">Finalizar Cadastro</button>
+                </div>
+
+                <p id="resultado"
+                    style="text-align: center; margin-top: 15px; font-size: 14px; color: #d9534f; font-weight: 500;"></p>
             </div>
 
-            <div class="div_grupo">
-                <label class="label_padrao">Confirmar Senha</label>
-                <input id="confirmar_senha" class="input_padrao" type="password" placeholder="Repita sua senha">
-            </div>
+        </form>
 
-            <div class="div_botoes">
-                <button class="btn_secundario" onclick="voltarEtapa1()">Voltar</button>
-                <button id="btn_cadastrar" class="btn_principal">Finalizar Cadastro</button>
-            </div>
-
-            <p id="resultado"
-                style="text-align: center; margin-top: 15px; font-size: 14px; color: #d9534f; font-weight: 500;"></p>
-        </div>
-
-        <div id="popup_sucesso" class="popup oculto">
+        <div id="popup_sucesso" class="popup oculto" role="dialog" aria-modal="true">
             <div class="popup_box">
                 <div class="popup_icon">✓</div>
                 <h2>Sucesso!</h2>
@@ -124,7 +130,7 @@
             </div>
         </div>
 
-    </div>
+    </main>
 
     <script>
         // Navegação simples entre páginas

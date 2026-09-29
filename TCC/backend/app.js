@@ -898,27 +898,49 @@ app.delete("/deletarVaga/:id_vaga", autenticarToken, async (req, res) => {
             })
         }
 
+        // PEGA AS CANDIDATURAS DA VAGA
+        const [candidaturas] = await conexao.query(`
+            SELECT id_candidatura
+            FROM vagas_candidatar
+            WHERE id_vaga = ?
+        `, [id_vaga])
+
         // APAGA ENTREVISTAS DA VAGA
         await conexao.query(`
-    DELETE FROM entrevistas
-    WHERE id_candidatura IN (
-        SELECT id_candidatura
-        FROM vagas_candidatar
-        WHERE id_vaga = ?
-    )
-`, [id_vaga])
+            DELETE FROM entrevistas
+            WHERE id_candidatura IN (
+                SELECT id_candidatura
+                FROM vagas_candidatar
+                WHERE id_vaga = ?
+            )
+        `, [id_vaga])
+
+        // APAGA NOTIFICAÇÕES DAS CANDIDATURAS
+        if (candidaturas.length > 0) {
+
+            const idsCandidaturas = candidaturas.map(
+                candidatura => candidatura.id_candidatura
+            )
+
+            const placeholders = idsCandidaturas.map(() => "?").join(",")
+
+            await conexao.query(`
+                DELETE FROM notificacoes
+                WHERE id_candidatura IN (${placeholders})
+            `, idsCandidaturas)
+        }
 
         // APAGA CANDIDATURAS
         await conexao.query(`
-    DELETE FROM vagas_candidatar
-    WHERE id_vaga = ?
-`, [id_vaga])
+            DELETE FROM vagas_candidatar
+            WHERE id_vaga = ?
+        `, [id_vaga])
 
         // APAGA VAGA
         await conexao.query(`
-    DELETE FROM vagas_criar
-    WHERE id_vaga = ?
-`, [id_vaga])
+            DELETE FROM vagas_criar
+            WHERE id_vaga = ?
+        `, [id_vaga])
 
         res.json({
             ok: true,
