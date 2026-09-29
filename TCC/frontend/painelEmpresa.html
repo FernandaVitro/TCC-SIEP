@@ -935,6 +935,7 @@
 
     carregarVagas()
     carregarTotalEntrevistas()
+    carregarNotificacoesEmpresa()
 
     // ================= OUTROS =================
     function toggleScreens() {
@@ -1593,7 +1594,7 @@
 
                 <div
                     class="flex-1 cursor-pointer"
-                    onclick="marcarNotificacaoEmpresa(${n.id_notificacao}, ${naoLida})"
+                    onclick="marcarNotificacaoEmpresaLida(${n.id_notificacao})"
                 >
 
                     <div class="flex items-center gap-2 flex-wrap">
@@ -1630,11 +1631,9 @@
 
                     <p class="text-slate-600 mt-1">
 
-                        ${escaparHTMLNotificacaoEmpresa(
-                        n.mensagem
-                    )}
+    ${n.mensagem || ""}
 
-                    </p>
+</p>
 
 
                     <p class="text-xs text-slate-400 mt-2">
@@ -1678,10 +1677,6 @@
 
     }
 
-
-    // ============================================================
-    // CONTADOR
-    // ============================================================
 
     // ============================================================
     // ATUALIZAR CONTADOR DE NOTIFICAÇÕES

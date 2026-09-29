@@ -59,53 +59,203 @@ app.listen(porta, () => {
 // CADASTRO USUÁRIO 
 app.post("/cadastroUsuario", async (req, res) => {
     try {
-        const { nome_completo, data_nasc, cpf, rg, email, telefone, endereco, cidade, uf } = req.body
+        let {
+            nome_completo,
+            data_nasc,
+            cpf,
+            rg,
+            email,
+            telefone,
+            endereco,
+            cidade,
+            uf
+        } = req.body
+
         let { senha } = req.body
 
-        senha = senha.trim()
+        // ==============================
+        // NORMALIZAÇÕES
+        // ==============================
 
-        if (senha === "") return res.json({ resposta: "Preencha sua senha" })
-        if (senha.length < 6) return res.json({ resposta: "Senha muito curta" })
-        if (email.length < 6) return res.json({ resposta: "Email inválido" })
-        if (nome_completo.length < 6) return res.json({ resposta: "Nome inválido" })
+        nome_completo = (nome_completo || "").trim()
+        email = (email || "").trim()
+        cpf = (cpf || "").replace(/\D/g, "")
+        rg = (rg || "").trim()
+        senha = (senha || "").trim()
 
-        let [existeEmail] = await conexao.query('SELECT * FROM cadastro_usuario WHERE email = ?', [email])
-        if (existeEmail.length !== 0) return res.json({ resposta: "E-mail já cadastrado" })
+        // ==============================
+        // VALIDAÇÕES
+        // ==============================
 
-        let [existeCpf] = await conexao.query('SELECT * FROM cadastro_usuario WHERE cpf = ?', [cpf])
-        if (existeCpf.length !== 0) return res.json({ resposta: "CPF já cadastrado" })
+        if (senha === "") {
+            return res.json({ resposta: "Preencha sua senha" })
+        }
 
-        let [existeTelefone] = await conexao.query('SELECT * FROM cadastro_usuario WHERE telefone = ?', [telefone])
-        if (existeTelefone.length !== 0) return res.json({ resposta: "Telefone já cadastrado" })
+        if (senha.length < 6) {
+            return res.json({ resposta: "Senha muito curta" })
+        }
 
-        const hash = crypto.createHash("sha256").update(senha).digest("base64")
+        if (email.length < 6) {
+            return res.json({ resposta: "Email inválido" })
+        }
+
+        if (nome_completo.length < 6) {
+            return res.json({ resposta: "Nome inválido" })
+        }
+
+        // Não permite números no nome
+        if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(nome_completo)) {
+            return res.json({
+                resposta: "O nome não pode conter números ou caracteres inválidos"
+            })
+        }
+
+        // CPF deve conter somente 11 números
+        if (cpf.length !== 11) {
+            return res.json({
+                resposta: "CPF inválido"
+            })
+        }
+
+        // RG obrigatório
+        if (rg === "") {
+            return res.json({
+                resposta: "Preencha seu RG"
+            })
+        }
+
+        // ==============================
+        // VERIFICAÇÕES NO BANCO
+        // ==============================
+
+        let [existeEmail] = await conexao.query(
+            'SELECT * FROM cadastro_usuario WHERE email = ?',
+            [email]
+        )
+
+        if (existeEmail.length !== 0) {
+            return res.json({
+                resposta: "E-mail já cadastrado"
+            })
+        }
+
+        let [existeCpf] = await conexao.query(
+            'SELECT * FROM cadastro_usuario WHERE cpf = ?',
+            [cpf]
+        )
+
+        if (existeCpf.length !== 0) {
+            return res.json({
+                resposta: "CPF já cadastrado"
+            })
+        }
+
+        let [existeRg] = await conexao.query(
+            'SELECT * FROM cadastro_usuario WHERE LOWER(TRIM(rg)) = LOWER(TRIM(?))',
+            [rg]
+        )
+
+        if (existeRg.length !== 0) {
+            return res.json({
+                resposta: "RG já cadastrado"
+            })
+        }
+
+        let [existeTelefone] = await conexao.query(
+            'SELECT * FROM cadastro_usuario WHERE telefone = ?',
+            [telefone]
+        )
+
+        if (existeTelefone.length !== 0) {
+            return res.json({
+                resposta: "Telefone já cadastrado"
+            })
+        }
+
+        // ==============================
+        // CRIAR SENHA
+        // ==============================
+
+        const hash = crypto
+            .createHash("sha256")
+            .update(senha)
+            .digest("base64")
+
+        // ==============================
+        // CADASTRAR USUÁRIO
+        // ==============================
 
         let [resultado] = await conexao.query(`
             INSERT INTO cadastro_usuario 
-            (nome_completo, data_nasc, cpf, rg, email, telefone, endereco, cidade, uf, senha) 
+            (
+                nome_completo,
+                data_nasc,
+                cpf,
+                rg,
+                email,
+                telefone,
+                endereco,
+                cidade,
+                uf,
+                senha
+            ) 
             VALUES (?,?,?,?,?,?,?,?,?,?)
-        `, [nome_completo, data_nasc, cpf, rg, email, telefone, endereco, cidade, uf, hash])
+        `, [
+            nome_completo,
+            data_nasc,
+            cpf,
+            rg,
+            email,
+            telefone,
+            endereco,
+            cidade,
+            uf,
+            hash
+        ])
 
         const id_usuario = resultado.insertId
 
-        await conexao.query(`INSERT INTO perfil_usuario (id_usuario) VALUES (?)`, [id_usuario])
+        await conexao.query(
+            `INSERT INTO perfil_usuario (id_usuario) VALUES (?)`,
+            [id_usuario]
+        )
 
-        res.json({ resposta: "Cadastro efetuado com sucesso!" })
+        res.json({
+            resposta: "Cadastro efetuado com sucesso!"
+        })
 
     } catch (error) {
-        res.status(500).json({ erro: "Erro no servidor" })
+
+        console.error("Erro no cadastro do usuário:", error)
+
+        res.status(500).json({
+            erro: "Erro no servidor"
+        })
     }
 })
 
 // LOGIN USUÁRIO 
 app.post("/loginUsuario", async (req, res) => {
     try {
-        const { cpf } = req.body
+        let { cpf } = req.body
         let { senha } = req.body
 
-        senha = senha.trim()
+        // Remove pontos, traços e qualquer caractere que não seja número
+        cpf = (cpf || "").replace(/\D/g, "")
 
-        const hash = crypto.createHash("sha256").update(senha).digest("base64")
+        senha = (senha || "").trim()
+
+        if (cpf.length !== 11) {
+            return res.json({
+                valido: false,
+                resposta: "CPF inválido"
+            })
+        }
+
+        const hash = crypto
+            .createHash("sha256")
+            .update(senha)
+            .digest("base64")
 
         const [resultado] = await conexao.query(
             `SELECT * FROM cadastro_usuario WHERE cpf = ? AND senha = ?`,
@@ -127,25 +277,45 @@ app.post("/loginUsuario", async (req, res) => {
             })
 
         } else {
-            res.json({ valido: false })
+            res.json({
+                valido: false
+            })
         }
 
     } catch (error) {
-        res.status(500).json({ erro: "Erro no servidor" })
+
+        console.error("Erro no login do usuário:", error)
+
+        res.status(500).json({
+            erro: "Erro no servidor"
+        })
     }
 })
 
 // RECUPERAR SENHA CANDIDATO (LOGIN)
 app.put("/recuperarSenha", async (req, res) => {
     try {
-        const { cpf, resposta, campo, novaSenha } = req.body
+        let { cpf, resposta, campo, novaSenha } = req.body
+
+        // Remove máscara do CPF
+        cpf = (cpf || "").replace(/\D/g, "")
 
         if (!cpf || !resposta || !campo || !novaSenha) {
-            return res.json({ erro: "Dados inválidos" })
+            return res.json({
+                erro: "Dados inválidos"
+            })
+        }
+
+        if (cpf.length !== 11) {
+            return res.json({
+                erro: "CPF inválido"
+            })
         }
 
         if (novaSenha.length < 6) {
-            return res.json({ erro: "Senha muito curta" })
+            return res.json({
+                erro: "Senha muito curta"
+            })
         }
 
         const [usuarios] = await conexao.query(
@@ -154,30 +324,51 @@ app.put("/recuperarSenha", async (req, res) => {
         )
 
         if (usuarios.length === 0) {
-            return res.json({ erro: "Usuário não encontrado" })
+            return res.json({
+                erro: "Usuário não encontrado"
+            })
         }
 
         const usuario = usuarios[0]
 
-        const valorBanco = (usuario[campo] || "").toString().trim().toLowerCase()
-        const valorDigitado = resposta.trim().toLowerCase()
+        const valorBanco =
+            (usuario[campo] || "")
+                .toString()
+                .trim()
+                .toLowerCase()
+
+        const valorDigitado =
+            resposta
+                .trim()
+                .toLowerCase()
 
         if (valorBanco !== valorDigitado) {
-            return res.json({ erro: "Resposta incorreta" })
+            return res.json({
+                erro: "Resposta incorreta"
+            })
         }
 
-        const hash = crypto.createHash("sha256").update(novaSenha).digest("base64")
+        const hash = crypto
+            .createHash("sha256")
+            .update(novaSenha)
+            .digest("base64")
 
         await conexao.query(
             "UPDATE cadastro_usuario SET senha = ? WHERE cpf = ?",
             [hash, cpf]
         )
 
-        res.json({ ok: true })
+        res.json({
+            ok: true
+        })
 
     } catch (error) {
 
-        res.status(500).json({ erro: "Erro no servidor" })
+        console.error("Erro ao recuperar senha:", error)
+
+        res.status(500).json({
+            erro: "Erro no servidor"
+        })
     }
 })
 
@@ -999,6 +1190,22 @@ app.post("/entrevistas", autenticarToken, async (req, res) => {
             local_link
         } = req.body
 
+        // Buscar o candidato da candidatura
+        const [candidaturas] = await conexao.query(`
+            SELECT id_usuario
+            FROM vagas_candidatar
+            WHERE id_candidatura = ?
+        `, [id_candidatura])
+
+        if (candidaturas.length === 0) {
+            return res.status(404).json({
+                erro: "Candidatura não encontrada"
+            })
+        }
+
+        const idUsuario = candidaturas[0].id_usuario
+
+        // Criar entrevista
         await conexao.query(`
             INSERT INTO entrevistas
             (id_candidatura, data, horario, tipo_entrevista, local_link)
@@ -1011,12 +1218,41 @@ app.post("/entrevistas", autenticarToken, async (req, res) => {
             local_link
         ])
 
-        // atualizar status
+        // Atualizar status
         await conexao.query(`
             UPDATE vagas_candidatar
             SET status = 'Entrevista marcada'
             WHERE id_candidatura = ?
         `, [id_candidatura])
+
+        // Criar notificação para o candidato
+        await conexao.query(`
+            INSERT INTO notificacoes
+            (
+                id_usuario,
+                id_empresa,
+                id_candidatura,
+                mensagem,
+                tipo,
+                lida,
+                data_envio
+            )
+            VALUES
+            (
+                ?,
+                NULL,
+                ?,
+                ?,
+                ?,
+                0,
+                NOW()
+            )
+        `, [
+            idUsuario,
+            id_candidatura,
+            "Sua entrevista foi marcada pela empresa.",
+            "entrevista_agendada"
+        ])
 
         res.json({
             ok: true
@@ -1034,34 +1270,153 @@ app.post("/entrevistas", autenticarToken, async (req, res) => {
 
 //
 
-// CANDIDATAR usuario
+// CANDIDATAR USUÁRIO
 app.post('/candidatar', autenticarToken, async (req, res) => {
+
     try {
+
         const { id_vaga } = req.body
         const id_usuario = req.user.id_usuario
 
         // Verifica se já se candidatou
         const [existe] = await conexao.query(
-            "SELECT * FROM vagas_candidatar WHERE id_vaga = ? AND id_usuario = ?",
+            `
+            SELECT *
+            FROM vagas_candidatar
+            WHERE id_vaga = ?
+            AND id_usuario = ?
+            `,
             [id_vaga, id_usuario]
         )
 
         if (existe.length > 0) {
-            return res.json({ mensagem: "Você já se candidatou a esta vaga" })
+
+            return res.json({
+                mensagem: "Você já se candidatou a esta vaga"
+            })
+
         }
 
-        // 👇 AQUI é onde entra a correção
-        await conexao.query(
-            "INSERT INTO vagas_candidatar (id_vaga, id_usuario, status, `data_candidatura`) VALUES (?, ?, 'em análise', NOW())",
+
+        // Busca a vaga e a empresa responsável por ela
+        const [vaga] = await conexao.query(
+            `
+            SELECT
+                id_vaga,
+                id_empresa,
+                titulo_vaga
+            FROM vagas_criar
+            WHERE id_vaga = ?
+            `,
+            [id_vaga]
+        )
+
+
+        if (vaga.length === 0) {
+
+            return res.status(404).json({
+                erro: "Vaga não encontrada"
+            })
+
+        }
+
+
+        const id_empresa = vaga[0].id_empresa
+        const titulo_vaga = vaga[0].titulo_vaga
+
+
+        // Busca o nome do candidato
+        const [usuario] = await conexao.query(
+            `
+            SELECT nome_completo
+            FROM cadastro_usuario
+            WHERE id_usuario = ?
+            `,
+            [id_usuario]
+        )
+
+
+        if (usuario.length === 0) {
+
+            return res.status(404).json({
+                erro: "Usuário não encontrado"
+            })
+
+        }
+
+
+        const nome_usuario = usuario[0].nome_completo
+
+
+        // Cria a candidatura
+        const [resultado] = await conexao.query(
+            `
+            INSERT INTO vagas_candidatar
+            (
+                id_vaga,
+                id_usuario,
+                status,
+                data_candidatura
+            )
+            VALUES
+            (?, ?, 'em análise', NOW())
+            `,
             [id_vaga, id_usuario]
         )
 
-        res.json({ mensagem: "Candidatura enviada" })
+
+        // ID da candidatura criada
+        const id_candidatura = resultado.insertId
+
+
+        // Cria a notificação PARA A EMPRESA
+        await conexao.query(
+            `
+            INSERT INTO notificacoes
+            (
+                id_usuario,
+                id_empresa,
+                id_candidatura,
+                mensagem,
+                tipo,
+                lida,
+                data_envio
+            )
+            VALUES
+            (
+                NULL,
+                ?,
+                ?,
+                ?,
+                ?,
+                0,
+                NOW()
+            )
+            `,
+            [
+                id_empresa,
+                id_candidatura,
+                `${nome_usuario} se candidatou à vaga "${titulo_vaga}".`,
+                "nova_candidatura"
+            ]
+        )
+
+
+        res.json({
+            mensagem: "Candidatura enviada"
+        })
+
 
     } catch (erro) {
-        console.log(erro)
-        res.status(500).json({ erro: "Erro ao candidatar" })
+
+        console.error("Erro ao candidatar:", erro)
+
+        res.status(500).json({
+            erro: "Erro ao candidatar"
+        })
+
     }
+
 })
 
 // LISTAR CANDIDATURAS DA EMPRESA 
@@ -1399,7 +1754,7 @@ app.get('/entrevistasUsuario/:id_usuario', autenticarToken, async (req, res) => 
             INNER JOIN vagas_candidatar vc
                 ON e.id_candidatura = vc.id_candidatura
             WHERE vc.id_usuario = ?
-            ORDER BY e.data ASC, e.horario ASC`,
+            ORDER BY e.data DESC, e.horario DESC`,
             [id_usuario]
         );
 
@@ -1478,8 +1833,6 @@ app.get('/candidaturasUsuario/:id_usuario', autenticarToken, async (req, res) =>
 });
 
 // ==================== NOTIFICAÇÕES ====================
-// Funciona para CANDIDATO e EMPRESA.
-// O tipo de usuário é identificado pelo token JWT.
 
 // ======================================================
 // FUNÇÃO PARA IDENTIFICAR O DONO DA NOTIFICAÇÃO
