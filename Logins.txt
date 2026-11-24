@@ -4,6 +4,7 @@ Email Corporativo: contato@technovasolucoes.com.br
 Senha: 123456
 
 Para trocar de senha
+CNPJ: 12.345.678/0001-90
 PIN: 4829
 
 ---
@@ -13,4 +14,5 @@ LOGIN CANDIDATO
 CPF: 123.456.789-00
 Senha: 123456
 
+Para trocar de senha
 PIN: 7315
