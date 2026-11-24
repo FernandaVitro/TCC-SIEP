@@ -1,0 +1,139 @@
+
+/* botão + */
+.btn-add {
+    background-color: #0f8b71;
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+}
+
+.logo-quadrada {
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* mantém proporção */
+    border-radius: 10px; /* deixa levemente arredondado */
+}
+
+
+/* tags estilo da imagem */
+.tag {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 5px 12px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tag span {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ==========================================================
+   ESTILIZAÇÃO MODAL PERFIL DO CANDIDATO
+   ========================================================== */
+
+/* Fundo escuro/desfocado atrás da modal */
+#modal-perfil {
+    background-color: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+}
+
+/* Container Principal da Modal */
+#modal-perfil > div {
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Foto de Perfil com borda suave */
+#perfil-foto {
+    object-fit: cover;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilização dos Cards Internos de Informação */
+#modal-perfil .grid > div,
+#modal-perfil .bg-slate-50\/80 {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+#modal-perfil .grid > div:hover {
+    border-color: #cbd5e1;
+    background-color: #f1f5f9 !important;
+}
+
+/* Títulos dos campos (Escolaridade, Curso, etc) */
+#modal-perfil p.text-xs {
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Conteúdo dos campos */
+#modal-perfil p.font-medium,
+#modal-perfil p.font-semibold {
+    color: #0f172a;
+}
+
+/* Botão Abrir Currículo PDF */
+#perfil-cv {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1;
+    color: #334155 !important;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+#perfil-cv:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #94a3b8;
+    color: #0f172a !important;
+}
+
+/* Botão Marcar Entrevista */
+button[onclick*="irEntrevista"] {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    transition: all 0.2s ease;
+}
+
+button[onclick*="irEntrevista"]:hover {
+    background-color: #1d4ed8 !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    transform: translateY(-1px);
+}
+
+/* Select de Status */
+#status-candidato {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#status-candidato:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Botão Salvar Status */
+button[onclick*="salvarStatus"] {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+}
+
+button[onclick*="salvarStatus"]:hover {
+    background-color: #1e293b !important;
+}

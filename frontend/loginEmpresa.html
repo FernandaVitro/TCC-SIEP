@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEP</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="Styles/loginEmpresa.css">
+
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+</head>
+
+<body>
+
+    <!-- RECUPERAR SENHA -->
+    <div id="boxRecuperarEmpresa" class="overlay-recuperar" style="display: none;">
+
+        <div class="recuperar-card">
+
+            <h3>Recuperar senha</h3>
+            <p class="recuperar-sub">Digite seus dados</p>
+
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-building"></i>
+                    <input type="text" id="cnpjRecuperar" placeholder="CNPJ" autocomplete="off" maxlength="18" value="">
+                </div>
+            </div>
+
+            <div class="input-group active">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="novaSenhaRecuperarEmpresa" placeholder="Nova senha"
+                        autocomplete="new-password" value="">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="respostaSegurancaEmpresa" placeholder="Digite o PIN" disabled
+                        autocomplete="off" value="">
+                </div>
+            </div>
+
+            <button type="button" class="btn-submit" id="btnRecuperarEmpresa">
+                Atualizar senha
+            </button>
+
+            <button type="button" class="btn-cancelar" onclick="fecharRecuperarEmpresa()">
+                Cancelar
+            </button>
+
+        </div>
+    </div>
+
+    <div class="container">
+
+        <a href="#" class="back-link" id="btn_voltar_inicio">
+            <i class="fa-solid fa-arrow-left"></i> Voltar para início
+        </a>
+
+        <div class="card">
+
+            <img src="img/logo.png" class="logo-quadrada" alt="Logo do SIEP">
+
+            <h1>Área da Empresa</h1>
+            <p class="subtitle">Acesse o painel de gestão</p>
+
+            <form id="form_login_empresa">
+
+                <div class="input-group">
+                    <label for="input_email_empresa">Email Corporativo</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="input_email_empresa" autocomplete="off" autocapitalize="off"
+                            autocorrect="off" spellcheck="false" value="">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="input_senha_empresa">Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="input_senha_empresa" autocomplete="new-password" value="">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar</button>
+
+                <p style="margin-top:10px;">
+                    <a href="#" id="btnEsqueciSenhaEmpresa">Esqueci minha senha</a>
+                </p>
+
+            </form>
+
+            <p id="msg_resultado"></p>
+
+            <p class="footer-text">
+                Não tem uma conta?
+                <a href="#" id="btn_ir_cadastro_empresa">Cadastre sua empresa</a>
+            </p>
+
+        </div>
+    </div>
+
+    <script>
+        const msgResultado = document.getElementById("msg_resultado");
+        const boxRecuperarEmpresa = document.getElementById("boxRecuperarEmpresa");
+        const campoCnpj = document.getElementById("cnpjRecuperar");
+        const campoPin = document.getElementById("respostaSegurancaEmpresa");
+        const campoNovaSenha = document.getElementById("novaSenhaRecuperarEmpresa");
+        const botaoRecuperar = document.getElementById("btnRecuperarEmpresa");
+
+        // LIMPAR CAMPOS AO CARREGAR
+        window.addEventListener("load", () => {
+            document.getElementById("input_email_empresa").value = "";
+            document.getElementById("input_senha_empresa").value = "";
+
+            campoCnpj.value = "";
+            campoNovaSenha.value = "";
+            campoPin.value = "";
+            campoPin.disabled = true;
+            campoPin.placeholder = "Digite o CNPJ primeiro";
+        });
+
+        // VOLTAR PARA O INÍCIO
+        document.getElementById("btn_voltar_inicio").onclick = (e) => {
+            e.preventDefault();
+            window.location.href = "index.html";
+        };
+
+        // IR PARA CADASTRO
+        document.getElementById("btn_ir_cadastro_empresa").onclick = (e) => {
+            e.preventDefault();
+            window.location.href = "cadastroEmpresa.html";
+        };
+
+        // LOGIN DA EMPRESA
+        document.getElementById("form_login_empresa").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("input_email_empresa").value.trim();
+            const senha = document.getElementById("input_senha_empresa").value;
+
+            msgResultado.innerText = "";
+
+            try {
+                const resposta = await fetch("http://localhost:3000/loginEmpresa", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await resposta.json();
+
+                if (data.ok) {
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("id_empresa", data.id_empresa);
+                    window.location.href = "painelEmpresa.html";
+                } else {
+                    msgResultado.innerText = data.erro || "Email ou senha inválidos";
+                }
+
+            } catch (erro) {
+                console.error("Erro no login:", erro);
+                msgResultado.innerText = "Erro no servidor";
+            }
+        });
+
+        // ABRIR MODAL DE RECUPERAÇÃO
+        document.getElementById("btnEsqueciSenhaEmpresa").onclick = (e) => {
+            e.preventDefault();
+
+            boxRecuperarEmpresa.style.display = "flex";
+
+            campoCnpj.value = "";
+            campoNovaSenha.value = "";
+            campoPin.value = "";
+
+            campoPin.disabled = true;
+            campoPin.placeholder = "Digite o CNPJ primeiro";
+
+            campoCnpj.focus();
+        };
+
+        // HABILITAR PIN DEPOIS DE PREENCHER O CNPJ
+        campoCnpj.addEventListener("input", () => {
+            const cnpj = campoCnpj.value.replace(/\D/g, "");
+
+            campoPin.value = "";
+
+            if (cnpj.length === 14) {
+                campoPin.disabled = false;
+                campoPin.placeholder = "Digite o PIN cadastrado";
+            } else {
+                campoPin.disabled = true;
+                campoPin.placeholder = "Digite o CNPJ completo primeiro";
+            }
+        });
+
+        // FECHAR MODAL
+        function fecharRecuperarEmpresa() {
+            boxRecuperarEmpresa.style.display = "none";
+        }
+
+        // RECUPERAR SENHA USANDO CNPJ E PIN
+        botaoRecuperar.onclick = async () => {
+            const cnpj = campoCnpj.value.replace(/\D/g, "");
+            const PIN = campoPin.value.trim();
+            const novaSenha = campoNovaSenha.value;
+
+            if (cnpj.length !== 14) {
+                alert("Digite um CNPJ válido com 14 dígitos.");
+                campoCnpj.focus();
+                return;
+            }
+
+            if (!PIN || !novaSenha) {
+                alert("Preencha o PIN e a nova senha.");
+                return;
+            }
+
+            if (novaSenha.length < 6) {
+                alert("A nova senha deve ter pelo menos 6 caracteres.");
+                campoNovaSenha.focus();
+                return;
+            }
+
+            botaoRecuperar.disabled = true;
+
+            try {
+                const resposta = await fetch("http://localhost:3000/recuperarSenhaEmpresa", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        cnpj,
+                        PIN,
+                        novaSenha
+                    })
+                });
+
+                const data = await resposta.json();
+
+                if (resposta.ok && data.ok) {
+                    alert("Senha atualizada com sucesso!");
+                    fecharRecuperarEmpresa();
+                } else {
+                    alert(data.erro || "Não foi possível atualizar a senha.");
+                }
+
+            } catch (erro) {
+                console.error("Erro ao atualizar senha:", erro);
+                alert("Erro ao conectar com o servidor.");
+            } finally {
+                botaoRecuperar.disabled = false;
+            }
+        };
+
+        // MÁSCARA CNPJ
+        function aplicarMascaraCNPJ(input) {
+            input.addEventListener("input", () => {
+                let valor = input.value.replace(/\D/g, "");
+
+                if (valor.length > 14) {
+                    valor = valor.substring(0, 14);
+                }
+
+                if (valor.length > 12) {
+                    valor = valor.replace(
+                        /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2}).*/,
+                        "$1.$2.$3/$4-$5"
+                    );
+                } else if (valor.length > 8) {
+                    valor = valor.replace(
+                        /^(\d{2})(\d{3})(\d{3})(\d{1,4}).*/,
+                        "$1.$2.$3/$4"
+                    );
+                } else if (valor.length > 5) {
+                    valor = valor.replace(
+                        /^(\d{2})(\d{3})(\d{1,3}).*/,
+                        "$1.$2.$3"
+                    );
+                } else if (valor.length > 2) {
+                    valor = valor.replace(
+                        /^(\d{2})(\d{1,3}).*/,
+                        "$1.$2"
+                    );
+                }
+
+                input.value = valor;
+            });
+        }
+
+        aplicarMascaraCNPJ(document.getElementById("cnpjRecuperar"));
+
+    </script>
+
+</body>
+
+</html>

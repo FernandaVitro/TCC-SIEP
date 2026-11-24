@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEP</title>
+    <link rel="stylesheet" href="Styles/cursos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+</head>
+
+<body>
+    <nav class="div_menu_lateral">
+        <img src="img/logo.png" class="logo-quadrada" alt="Logo do SIEP"> 
+
+        <a href="cursos.html" class="btn_item_navegacao ativo"><i class="fas fa-home"></i> Cursos</a>
+        <a href="#" class="btn_item_navegacao"><i class="fas fa-search" id="entrar_vagas"></i> Vagas</a>
+        <a href="minhaCandidaturas.html" class="btn_item_navegacao"><i class="fas fa-file-alt"></i> Minhas Candidaturas</a>
+        <a href="entrevistaCandidato.html" class="btn_item_navegacao"><i class="fas fa-calendar-alt"></i> Entrevistas</a>
+        <a href="perfil.html" class="btn_item_navegacao"><i class="fas fa-user"></i> Meu Perfil</a>
+        <a href="notificacaoCandidato.html" class="btn_item_navegacao">
+            <i class="fas fa-bell"></i>
+            Notificações
+            <span id="contadorNotificacoes" class="contador_notificacoes" style="display: none;">
+                0
+            </span>
+        </a>
+
+        <div class="div_espacador_sair">
+            <a href="#" class="btn_item_navegacao" id="voltar_inicio">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </a>
+        </div>
+    </nav>
+
+    <main class="conteudo_cursos">
+        <div class="cabecalho_cursos">
+            <h1>Cursos</h1>
+        </div>
+
+        <div class="pesquisa_cursos">
+            <i class="fas fa-search"></i>
+            <input type="text" id="pesquisaCurso" placeholder="Pesquisar curso..." onkeyup="filtrarCursos()">
+        </div>
+
+        <div class="lista_cursos" id="listaCursos"></div>
+    </main>
+
+    <script>
+        const BASE = "https://cursoseducaweb.com.br/";
+
+        const cursos = [
+            { titulo: "Curso de Autismo", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Saúde", "Educação", "Inclusão"], link: BASE + "curso-de-autismo" },
+            { titulo: "Curso de Chefia e Liderança", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Administração", "Liderança", "Gestão"], link: BASE + "curso-de-chefia-e-lideranca" },
+            { titulo: "Curso de Informática Básica", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Informática", "Computador", "Básico"], link: BASE + "curso-de-informatica-basica" },
+            { titulo: "Curso de Operador de Telemarketing", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Telemarketing", "Atendimento", "Vendas"], link: BASE + "curso-de-operador-de-telemarketing" },
+            { titulo: "Curso NR 35 - Trabalho em Altura Básico", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Segurança", "NR 35", "Altura"], link: BASE + "curso-de-basico-de-nr-35" },
+            { titulo: "Curso de Atendente e Balconista de Farmácia", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Farmácia", "Saúde", "Atendimento"], link: BASE + "curso-de-atendente-de-farmacia" },
+            { titulo: "Curso de Cuidador de Idosos", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Saúde", "Cuidados", "Idosos"], link: BASE + "curso-de-cuidador-de-idosos" },
+            { titulo: "Curso de Técnicas de Atendimento ao Cliente", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Atendimento", "Cliente", "Vendas"], link: BASE + "curso-de-tecnicas-de-atendimento-ao-cliente" },
+            { titulo: "Curso de Atendente de Consultório Dentário", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Odontologia", "Saúde", "Atendimento"], link: BASE + "curso-de-atendente-de-consultorio-dentario" },
+            { titulo: "Curso de Atendente de Loja", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Varejo", "Atendimento", "Vendas"], link: BASE + "curso-de-atendente-de-loja" },
+            { titulo: "Curso de Atendimento Comercial", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Comércio", "Atendimento", "Vendas"], link: BASE + "curso-de-atendimento-comercial" },
+            { titulo: "Curso de Aplicação de Larvicidas", instituicao: "EducaWeb", duracao: "10h a 180h", tags: ["Saúde", "Prevenção", "Zoonoses"], link: BASE + "curso-de-aplicacao-de-larvicidas" },
+            ...cursosSenai()
+        ];
+
+        function cursosSenai() {
+            const SENAI = "https://www.sp.senai.br/cursos/cursos-livres/";
+            const areas = [
+                ["Administração e Gestão", "administracao-e-gestao", ["Administração", "Gestão"]],
+                ["Alimentos e Bebidas", "alimentos-e-bebidas", ["Alimentos", "Bebidas"]],
+                ["Automotiva", "automotiva", ["Automotiva", "Mecânica"]],
+                ["Construção Civil e Design de Mobiliário", "construcao-civil-e-design-de-mobiliario", ["Construção Civil", "Mobiliário"]],
+                ["Design de Moda, Têxtil, Vestuário, Calçados e Joalheria", "design-de-moda-textil-vestuario-calcados-e-joalheria", ["Moda", "Têxtil", "Joalheria"]],
+                ["Design Gráfico, Papel, Celulose, Gráfica e Editorial", "design-grafico-papel-celulose-grafica-e-editorial", ["Design Gráfico", "Gráfica", "Editorial"]],
+                ["Fabricação Mecânica e Mecânica Industrial", "fabricacao-mecanica-e-mecanica-industrial", ["Mecânica", "Indústria"]],
+                ["Logística e Transporte", "logistica-e-transporte", ["Logística", "Transporte"]],
+                ["Mecatrônica, Automação, Energia e Eletrônica", "mecatronica-sistemas-de-automacao-energia-e-eletronica", ["Mecatrônica", "Automação", "Eletrônica"]],
+                ["Meio Ambiente, Saúde e Segurança do Trabalho", "meio-ambiente-saude-e-seguranca-do-trabalho", ["Meio Ambiente", "Saúde", "Segurança"]],
+                ["Metalurgia e Soldagem", "metalurgia-e-soldagem", ["Metalurgia", "Soldagem"]],
+                ["Química, Cerâmica e Plásticos", "quimica-ceramica-e-plasticos", ["Química", "Cerâmica", "Plásticos"]],
+                ["Refrigeração e Climatização", "refrigeracao-e-climatizacao", ["Refrigeração", "Climatização"]],
+                ["Tecnologia da Informação e Informática", "tecnologia-da-informacao-e-informatica", ["TI", "Informática", "Programação"]]
+            ];
+
+            return areas.map(([nome, slug, tags]) => ({
+                titulo: "Cursos Livres SENAI: " + nome,
+                instituicao: "SENAI-SP",
+                duracao: "Varia por curso",
+                tags: tags,
+                link: SENAI + slug
+            }));
+        }
+
+        function renderizarCursos() {
+            const lista = document.getElementById("listaCursos");
+
+            lista.innerHTML = cursos.map(c => `
+            <div class="card_curso">
+                <div class="card_icone">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="card_conteudo">
+                    <h3>${c.titulo}</h3>
+                    <span class="instituicao">${c.instituicao}</span>
+                    <div class="duracao">
+                        <i class="far fa-clock"></i> ${c.duracao}
+                    </div>
+                    <div class="tags">
+                        ${c.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+                    </div>
+                    <a href="${c.link}" target="_blank" rel="noopener" class="btn_acessar">
+                        Acessar curso <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>`).join("");
+        }
+
+        renderizarCursos();
+
+        function filtrarCursos() {
+            const pesquisa = document.getElementById("pesquisaCurso").value.toLowerCase();
+            const cards = document.querySelectorAll(".card_curso");
+
+            cards.forEach(curso => {
+                const texto = curso.innerText.toLowerCase();
+                if (texto.includes(pesquisa)) {
+                    curso.style.display = "flex";
+                } else {
+                    curso.style.display = "none";
+                }
+            });
+        }
+
+        // Vagas
+        document.querySelectorAll(".btn_item_navegacao")[1].onclick = () => {
+            window.location.href = 'vagasCandidato.html';
+        };
+
+        // SAIR
+        document.getElementById("voltar_inicio").onclick = () => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("id_usuario");
+            localStorage.removeItem("id_empresa");
+
+            window.location.href = "index.html";
+        };
+
+        // Contador de notificações
+
+    async function carregarContadorNotificacoes() {
+
+        const contador = document.getElementById("contadorNotificacoes")
+
+        // Se o contador não existir na página, não faz nada
+        if (!contador) {
+            return
+        }
+
+        // Pega o token do candidato
+        const tokenAtual = localStorage.getItem("token")
+
+        if (!tokenAtual) {
+            return
+        }
+
+        try {
+
+            const resposta = await fetch("http://localhost:3000/notificacoes", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + tokenAtual
+                }
+            })
+
+            const dados = await resposta.json()
+
+            console.log("Notificações recebidas:", dados)
+
+            if (!resposta.ok) {
+                console.error("Erro ao buscar notificações:", dados)
+                return
+            }
+
+            const quantidade = Number(dados.naoLidas) || 0
+
+            if (quantidade > 0) {
+
+                contador.textContent = quantidade
+                contador.style.display = "inline-flex"
+
+            } else {
+
+                contador.textContent = "0"
+                contador.style.display = "none"
+
+            }
+
+        } catch (erro) {
+
+            console.error("Erro ao carregar contador:", erro)
+
+        }
+    }
+
+
+    // Carrega o contador quando a página abrir
+    carregarContadorNotificacoes()
+    </script>
+</body>
+
+</html>
