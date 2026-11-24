@@ -1,0 +1,7 @@
+candidato: 
+48344792854
+123456
+
+empresa:
+fernanda.vitro@aluno.senai.br
+123456
