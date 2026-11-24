@@ -1,7 +1,16 @@
-candidato: 
-48344792854
-123456
+LOGIN EMPRESA
 
-empresa:
-fernanda.vitro@aluno.senai.br
-123456
+Email Corporativo: contato@technovasolucoes.com.br
+Senha: 123456
+
+Para trocar de senha
+PIN: 4829
+
+---
+
+LOGIN CANDIDATO
+
+CPF: 123.456.789-00
+Senha: 123456
+
+PIN: 7315
